@@ -1,0 +1,3152 @@
+Cyclos 3 changelog
+==================
+
+Version 3.7.3
+-------------
+
+New / modified functions
+ * Changed the hibernate.default_batch_fetch_size to 1 by default (previously, was 20). Now, Cyclos takes up much less memory, at minimum cost of performance.
+
+Bug fixes
+ * An unexpected exception could cause the Lucene indexing thread to be interrupted, resulting in no more indexes being updated
+ * There was a possible error while indexing members
+ * There could be errors when exporting data (member, member records, ads) with custom fields of type member autocomplete
+ * On PosWeb receive payment, when selecting the empty option for payment type, an error was being displayed
+ * A bug introduced in 3.7.2 prevented members from editing their own profile if there were custom fields marked as unique
+ * Custom fields with mask and flagged as unique were not correctly checked for uniqueness, making the validation always pass
+ * Payment custom fields which are marked as unique Ignore unique validation on payment custom field when transaction was cancelled or denied
+ * Custom fields of type URL were not being correctly validated
+ * Caches were not being correctly invalidated when deactivating an advertisement category, leading to inactive categories being shown on the advertisement search
+
+---------------------------------------------------------------------------
+
+Version 3.7.2
+-------------
+
+New / modified functions
+ * New custom field type: member
+ * Added a new option in member custom field on both Member search and Advertisements search: web services. So, the field can be used on web services searches without showing up on the application.
+ * Improved some database connection pool configurations in cyclos.properties
+ * Now the application root url (used on generated links) is no longer configured on the cyclos.properties file, but on the application itself (in local settings), and can be customized by group or group filter
+ * Added a broker filter for administrators searching member records
+
+Bug fixes
+ * It was not possible to repay a loan from another account using the same currency as the loan destination account
+ * Transfer types with permission are not returned when trying to perform a payment as user without permission to view system accounts
+ * Rest webservice payment with percentage fees shows wrong amount at payment confirmation
+ * Application error on member payment at amount validation when no payment type is provided
+ * Possible application error on mobile login
+ * Searching via web services using enumerated custom fields with multiple values was broken
+ * The search indexes for member records could have stale data when updating the owner member (be aware that it takes a few seconds to update the indexes)
+ * Transfer types on group permissions are not correct when changing visible accounts / groups and there are TTs marked as priority
+ * If a member registration take a long time to be completed another new member could be registered with the same values avoiding the uniqueness restriction of some values (username, email, custom field marked as unique)
+ * When removing an account from a group, if a member had it's limit for that account changed, the task which would deactivate the accounts failed
+
+---------------------------------------------------------------------------
+
+Version 3.7.1
+-------------
+
+New / modified functions
+ * New url: [root]/do/redirect?name=loginPageName&path=redirectPath which will set the login page cookie for customizations and then redirect to the given path
+ * Added min amount limit to transfer type
+ * When confirming a payment, if there are fees which deduct from total amount, a total amount field is now displayed
+ * On the make payment page, now the payment type name is always shown, even if there is only a single possible option
+ * On the make payment page, the possible currencies (when multiple) are only shown after selecting the destination member, to avoid showing currencies there would be no possible payment types
+ * Added an option on the payment type to control to which kind of users parent / child transactions will be visible
+ * Increased the maximum length of both payment type and transaction fees to 100 characters
+ * Added a group setting to not show the currency on payments, but all payment types directly
+ * The result list on external account history was changed to be more like the regular account history, including adding a member column
+ * The 'pending' status filter on external account history has been split in pending and complete and incomplete
+ * When importing external payments, the line number is retained, and no longer will appear file import errors, but the transactions will be imported anyway, and import comments will be generated for each error
+ * Added support for the first authorization level of system to member payments to be authorized by the receiver
+ * For loans with interests, it is no longer possible to pay intermediate amounts, as fees were never calculated over partial amounts
+
+Bug fixes
+ * The chargeback permissions were not being correctly controlled by the receiving account
+ * Error when searching for advertisements in web services using member custom fields as filters
+ * When accessing the login page as guest while using url parameter for group-customized layout, there could happen errors on the log
+ * Deadlock when using HazelcastLockHandler when performing an scheduled payment with the first expiration date for today
+ * After importing an external payment with an empty payment type, if there was a single possible payment type, it was not possible to save the record
+ * The login page fields were too large
+ * When the current e-mail was empty and e-mail change validation was being used, there was an error while trying to set an e-mail for a member
+ * Member custom fields with update / visibility access to 'Members not at registration' which were marked as required always led public registrations to fail validation
+ * Under high concurrency, even when account locking was enabled, it was possible to exceed the maximum amount per day (set on the payment type)
+ * Removed members were being returned on the autocomplete fields if admins could manage such groups
+ * When the payment type has a maximum amount per day, a scheduled payment total amount was being checked at the current date, not each installment on the respective due date
+ * When advertisement description contents had HTML comments, a broken layout could be produced on the advertisement list, if the text truncation would en in the middle of the comments
+ * For new databases, the rest (mobile phone application) channel was not set as default to members
+
+---------------------------------------------------------------------------
+
+Version 3.7
+-----------
+
+New / modified functions
+ * The default theme has more space between elements, and the default thumbnail dimension is now 100x100 for new databases
+ * Now, when moving a member from group if he has scheduled payments we don't throw an exception, instead, we cancel all payments and notify the related members
+ * New quick access icon: search members
+ * Added the option to search advertisements using web services using group filters
+ * Now when the url parameter for a group filter is used, the public registration will only list possible groups within that group filter
+
+Bug fixes
+ * On flat member records results with rich text custom fields, only for the first result the value was displayed
+ * Was not possible to change a member from group if there were pending system/member scheduled payments even if the new group has the same accounts
+ * When registering a new member in public registration, customized files for the chosen group will be used
+ * If a member had a disabled account from a previous group, then that same account type is added to his current group, he might get duplicated accounts
+ * It was not possible to remove a group without users if it previously had an user
+ * Members in different groups which could see each other were getting permission denied errors when attempting to send an invoice from the profile
+ * On the admin home page, the number of connected users included users not visible by the admin
+ * When a broker or administrator registered a member with e-mail validation enabled, and there was no permission to view pending members, a permission denied was immediately displayed after the registration
+ * On some messages from broker to registered members, on the messages list / details the destination was not being correctly displayed
+ * There was too much margin besides images in edit profile / ad pages
+ * If the system clock is set to a past date, the account balances are no longer wrong because of daily calculated balances
+ * Some notifications generated from scheduled payments (processed, canceled, etc) were not sent
+ * Some pages displayed a link to a user profile even if the logged user didn't have permission to access that profile
+ * Newly created databases didn't take into account the default log path (in cyclos.properties) for web services or rest log files
+ * Change pin menu appearing for member with access to no channels using pin and without permission to modify the channel access
+ * Admins with permission to view a specific member record type was getting permission denied if the view member record types
+ * When using an url parameter for group / group filter customizations, some pages displayed to the guest were still not using the expected customizations
+
+New application translation keys
+ * createMember.created.pending
+ * customField.ad.visibility.WEB_SERVICE
+ * customImage.system.quickAccess_searchMembers
+ * quickAccess.searchMembers
+ * settings.message.scheduledPaymentsCancelled
+ * settings.message.scheduledPaymentsCancelledToOther
+
+Removed application translation keys
+ * alert.system.NULL_RATE
+ * changeGroup.error.move.hasPendingScheduledPayments
+ * changeGroup.error.remove.hasPendingScheduledPayments
+
+New setup translation keys
+ * settings.message.scheduled-payments-cancelled-to-other.body
+ * settings.message.scheduled-payments-cancelled-to-other.sms
+ * settings.message.scheduled-payments-cancelled-to-other.subject
+ * settings.message.scheduled-payments-cancelled.body
+ * settings.message.scheduled-payments-cancelled.sms
+ * settings.message.scheduled-payments-cancelled.subject
+
+---------------------------------------------------------------------------
+
+Version 3.7_RC1
+---------------
+
+New / modified functions
+ * Now e-mail validation can be configured in a more fine-grained way under member groups
+ * Now e-mail validation is used not only to register new members, but also when changing the e-mail
+ * Now, in case of locking errors on commit, the transaction is retried. This makes using Galera MySQL cluster more reliable.
+ * Via local settings, the member search result list can now be sorted chronological (on creation date) or alphabetical
+ * Brokers can now export their member list to CSV
+ * Added support for REST services, adding a new built-in channel for that
+ * Added group filter to the statistics pages
+ * Improvements and fixes in Hazelcast usage, providing better cluster support
+ * Now we use a thread pool to execute code in a new transaction (instead of create a new thread each time)
+ * Better memory management, releasing some acquired resources on shutdown, which helps preventing memory leaks
+ * Removed the optimize indexes functionality, as it is no longer recommended by Lucene, the full-text engine used by Cyclos
+ * Member custom fields where not being returned when loading an advertisement by id in web services
+ * Improved internals of how messages are sent to groups
+ * System images are no longer limited to the maximum image dimensions (in local settings)
+ * New member permission to change external access
+ * Added support (cyclos properties parameter) to create sms data when populate the db from scratch
+ * New bulk action to enable/disable access channels
+ * The box shadows on the default theme were too dark in chrome and IE. Please, re-apply the theme in order to get this update.
+
+Bug fixes
+ * Having disabled scheduling tasks a NullPointerException was being thrown when trying to save the local settings with a different scheduling task time
+ * Deadlock when making payments with lock in all (from and to) accounts
+ * There was an error when attempting to accept an invoice with multiple possible payment types
+ * There was an error if the cyclos.lockHandler.timeoutSeconds property had an space right after the number
+ * The local receipt printing was incorrectly escaping characters, leading to wrong print data
+ * Create new ad / edit ad shows category fields in wrong order
+ * Error when confirming an e-mail address (by clicking the link in the e-mail) after registration
+ * View Profile page may render distorted in case of hidden or empty fields.
+ * External transfers with no member resulted in NullPointerException
+ * Sometimes an error occurred when validating a member registration via e-mail
+ * Change member channels form gave admins/brokers with no persmission the impression that they had permission to change channels
+ * Changing a custom member field control to RTF didn't stop it from being hideable. Now making it to an RTF stops it from being hideable.
+ * When making a custom member field unhideable, existing instances of the field still remained hidden.
+ * If stylesheets couldn't be located, the application startup failed on a NullPointerException. With the fix it just starts, though images will not be loadable.
+ * State reports on a time in history showed data for which there is no history record available.
+ * State reports on a time in history now shows the date of the results.
+ * The height of options in a multi drop down was not correct
+ * The configuration (show in result/search) for linked payment custom fields was not take into account
+ * In a cluster, modifying translation keys don't immediately propagate changes to other nodes
+ * Values for custom fields no longer related to a member group were still being returned on advertisement searches
+ * Rich text custom fields with fixed width elements could break the view profile page if the contents were too large
+ * Removed members should never be returned on bulk actions
+ * In standalone with HSQLDB database, it was not possible to access the account history
+
+New library dependencies
+ * cxf-2.6.1.jar
+ * ehcache-core-2.6.0.jar
+ * hazelcast-2.2.jar
+ * hibernate-3.6.10.jar
+ * jackson-all-1.9.6.jar
+ * javassist-3.12.0.GA.jar
+ * lucene-analyzers-3.6.1.jar
+ * lucene-core-3.6.1.jar
+ * lucene-misc-3.6.1.jar
+ * lucene-queries-3.6.1.jar
+ * neethi-3.0.2.jar
+ * org.springframework.aop-3.1.2.RELEASE.jar
+ * org.springframework.asm-3.1.2.RELEASE.jar
+ * org.springframework.beans-3.1.2.RELEASE.jar
+ * org.springframework.context-3.1.2.RELEASE.jar
+ * org.springframework.context.support-3.1.2.RELEASE.jar
+ * org.springframework.core-3.1.2.RELEASE.jar
+ * org.springframework.expression-3.1.2.RELEASE.jar
+ * org.springframework.jdbc-3.1.2.RELEASE.jar
+ * org.springframework.orm-3.1.2.RELEASE.jar
+ * org.springframework.transaction-3.1.2.RELEASE.jar
+ * org.springframework.web-3.1.2.RELEASE.jar
+ * org.springframework.web.servlet-3.1.2.RELEASE.jar
+ * spring-security-config-3.1.0.RELEASE.jar
+ * spring-security-core-3.1.0.RELEASE.jar
+ * spring-security-web-3.1.0.RELEASE.jar
+ * xmlschema-core-2.0.2.jar
+
+Removed library dependencies
+ * cxf-2.4.4.jar
+ * ehcache-core-2.4.6.jar
+ * hazelcast-1.9.4.8.jar
+ * hibernate-3.6.8.jar
+ * javassist-3.9.0.jar
+ * lucene-analyzers-3.4.0.jar
+ * lucene-core-3.4.0.jar
+ * lucene-misc-3.4.0.jar
+ * lucene-queries-3.4.0.jar
+ * neethi-3.0.0.jar
+ * neethi-3.0.1.jar
+ * org.springframework.aop-3.0.6.RELEASE.jar
+ * org.springframework.asm-3.0.6.RELEASE.jar
+ * org.springframework.beans-3.0.6.RELEASE.jar
+ * org.springframework.context-3.0.6.RELEASE.jar
+ * org.springframework.context.support-3.0.6.RELEASE.jar
+ * org.springframework.core-3.0.6.RELEASE.jar
+ * org.springframework.expression-3.0.6.RELEASE.jar
+ * org.springframework.jdbc-3.0.6.RELEASE.jar
+ * org.springframework.orm-3.0.6.RELEASE.jar
+ * org.springframework.transaction-3.0.6.RELEASE.jar
+ * org.springframework.web-3.0.6.RELEASE.jar
+ * xmlschema-core-2.0.1.jar
+
+New application translation keys
+ * accountHistory.creditsDebitsBalance.amount
+ * adminTasks.indexes.status.ACTIVE
+ * alert.member.NEGATIVE_VIRTUAL_RATED_BALANCE
+ * alert.member.negativeVirtualRatedBalance
+ * alert.system.ACCOUNT_FEE_CANCELLED
+ * alert.system.ACCOUNT_FEE_FAILED
+ * alert.system.ACCOUNT_FEE_RECOVERED
+ * alert.system.NEGATIVE_VIRTUAL_RATED_BALANCE
+ * alert.system.NULL_RATE
+ * alert.system.RATE_INITIALIZATION_FAILED
+ * alert.system.negativeVirtualRatedBalance
+ * alert.system.rateInitializationFailed
+ * changeChannels.disableChannels
+ * changeChannels.enableChannels
+ * changeChannels.invalidChannelsSelection
+ * customField.confirmUnhide
+ * customField.type.DECIMAL
+ * customImage.system.mobileSplash_large
+ * customImage.system.mobileSplash_medium
+ * customImage.system.mobileSplash_small
+ * global.nothingSelected
+ * group.settings.emailValidation.ADMIN
+ * group.settings.emailValidation.BROKER
+ * group.settings.emailValidation.USER
+ * group.settings.emailValidation.WEB_SERVICE
+ * member.bulkActions.changeChannels
+ * member.bulkActions.changeChannels.confirmation
+ * member.bulkActions.channelsChanged
+ * member.bulkActions.channelsChangedForAll
+ * member.bulkActions.channelsNotChanged
+ * menu.member.personal.changePin
+ * mobile.welcomeMessage
+ * permission.adminMemberBulkActions.changeChannels
+ * permission.memberAccess.changeChannelsAccess
+ * profile.error.changeEmailValidationFailed
+ * profile.modified.emailPending
+ * profile.pendingEmail
+ * profile.pendingEmail.confirmed
+ * profile.pendingEmail.link
+ * profile.pendingEmail.resent
+ * profile.pendingEmailLastSent
+ * reports.current.presentation.result.at
+ * reports.stats.groupOfGroups
+ * settings.local.language.CZECH
+ * settings.local.memberSortOrder
+ * settings.local.memberSortOrder.ALPHABETICAL
+ * settings.local.memberSortOrder.CHRONOLOGICAL
+ * settings.log.restFile
+ * settings.log.restLevel
+ * settings.mail.smtpPassword
+ * settings.mail.smtpPort
+ * settings.mail.smtpServer
+ * settings.mail.smtpUseTLS
+ * settings.mail.smtpUsername
+ * smsMailing.error.variableNotFound
+ * smsMailing.systemName
+ * smsMailing.variables
+ * viewChannels.title.of
+
+Removed application translation keys
+ * adminTasks.indexOptimizeEnqueued
+ * adminTasks.indexes.optimize
+ * adminTasks.indexes.optimizeAll
+ * adminTasks.indexes.status.NOT_OPTIMIZED
+ * adminTasks.indexes.status.OPTIMIZED
+ * alert.system.INDEX_OPTIMIZED
+ * alert.system.indexOptimized
+ * customField.type.BIG_DECIMAL
+ * group.settings.emailValidation.ALL
+ * group.settings.emailValidation.EXTERNAL
+ * group.settings.emailValidation.NEVER
+ * group.settings.emailValidation.PUBLIC
+ * group.settings.emailValidation.PUBLIC_BROKER
+ * message.emailsSent
+ * message.error.pendingMessagesToBeSent
+ * message.messagesSent
+ * message.stillSending
+ * settings.mail.smtp.password
+ * settings.mail.smtp.port
+ * settings.mail.smtp.server
+ * settings.mail.smtp.useTLS
+ * settings.mail.smtp.username
+
+New setup translation keys
+ * action.create-sms-data
+ * arg.create-sms-data
+ * channel.rest
+ * info-text.sample.body
+ * info-text.sample.subject
+ * service-client.controller.name
+ * sms-data.end
+ * sms-data.start
+ * transfer-type.sms-charge.description
+ * transfer-type.sms-charge.name
+ * transfer-type.sms-trade.description
+ * transfer-type.sms-trade.name
+
+---------------------------------------------------------------------------
+
+Version 3.7_beta
+----------------
+
+---------------------------------------------------------------------------
+
+Version 3.6.1
+-------------
+
+New / modified functions
+ * Improvements on account fee execution handling: It is now possible to view an specific account fee execution details
+ * Improved performance when used Hibernate second level cache
+ * It is now possible to export member records to CSV from the global search
+ * Added a message for the first execution on standalone, after creating the DB, that Cyclos is still initializing
+ * Now the variables in notifications have been standardized and documented. Existing notification on the database have been updated to the new value.
+ * Improved the extension point of defining Java class names which are notified on payments
+ * Improved the account fee charging handing. Now, no manual administrator intervention is needed, except for starting fees defined to manually run. The cancel and recharge actions were removed.
+ * On the transaction type details, the transaction fees and broker commissions lists now include a column for the 'enabled' property
+ * Added a permission to change member e-mail. All groups with permission to change the name should initially have that permission too.
+ * Added the transaction number to the mobile / wap view payment page
+ * Added a flag on member group to show the description field on payments performed via PosWeb access
+ * Improved default layout of the posweb access (if there is an applied theme, you may need to re-apply it)
+ * Added an option in cyclos.properties to control the creation of a new session cookie right after logging-in. This option is better for security, but caused problems with some versions of Joomla when embedding Cyclos in an IFrame
+
+Bug fixes
+ * If a member doesn't save his preferences he will never receive a sms mailing
+ * The member's group sms preferences were not taken into account when the sms status is created the first time
+ * Admins with permission to grant loans but without permission to make regular payments where being denied from granting loans
+ * Saving a transaction fee or broker commission while setting specific 'to groups' could result in permission denied errors
+ * Text custom fields which are set for search filters where not correctly being applied
+ * When customizing a new file, the 'Modify' button shouldn't be displayed
+ * Payment description was not being returned via web services
+ * Javascript error on print pages
+ * Actions in the payment confirmation page (print / go to profile / new payment) where not working on some cases
+ * After performing a system payment, the buttons on confirmation page didn't work
+ * Javascript error on edit guarantee type
+ * If an existing database with pending Lucene index operations in a future date are found, the index would be indefinitely rebuilt
+ * Under some circumstances, the low units notification was not being sent
+ * The low units message on the group account settings was never used, when it should override (if present) the body in the message settings
+ * It was not possible to permanently remove an inactive member if there where member records or remarks
+ * It was not possible to enable a loan transfer type due to a JavaScript error
+ * On the account fee executions page, the next execution for daily or weekly scheduled account fees where incorrect
+ * On the account fees list, on the account type details, for weekly fees, the weekday was not being correctly displayed
+ * When trying to login with an user of a group without permission to login, an error log was being mistakenly generated
+ * Removed unused alert setting: Alert new pending members. This setting is no longer used since we added the e-mail validation on registration
+ * If a member had a blocked transaction password, the admins or broker couldn't change his PIN
+ * It was not possible for admins to accept invoices in behalf of members if the payment type is disabled (only for generated invoices)
+ * Fixed a duplicate validation message on public registration indicating that the e-mail is not unique
+ * Filtering the account history by group filters or groups always resulted in empty list
+ * On mobile and WAP payments, the description shouldn't be required
+ * The standalone server was not working with Java 7 on Windows
+ * E-mails were being required to be unique even if the settings said they shouldn't
+ * Ugly radio buttons were being generated for custom fields (thanks to timreeves)
+ * In case of validation error on the account fee page, after showing the error popup window, the error was being shown again in a new page
+ * Volume account fees with period = 1 day where never being charged
+ * Removed an unnecessary warning when disabling a volume account fee
+ * Webshop (external) payments were broken
+ * Changed the color of the 'no e-mail' text in notification preferences to make it more visible
+ * On admin group permissions, the transfer types were not being updated on the fly when changing the system accounts visibility
+ * When making a payment from member to member as admin or broker, after selecting a destination member, the back button would jump to that member profile, instead of the original member's profile
+ * When an administrator or broker couldn't change a member pin, only the external access, the page was still showing the change pin form
+ * Sometimes, a message that there were errors while displaying the results was being shown on the error / information page by mistake
+ * When there where new translation-related settings, the first time the application starts up, it would show them always in English
+ * An administrator with the permission to view account management, but without permission to view account information for any system accounts always had an error when trying to view the system accounts overview page
+ * If a scheduled account fee was disabled for a long time and then re-enabled, the next charged period would be wrong, taking the old execution as base
+ * When a session was expired, the last login date of the user was not updated
+ * When using fixed numbers on a custom field mask (example: \0\9########), the value was not correctly being saved
+ * When permanently removing a message through the remove icon, but the checkbox was also checked, there was an error
+ * Expired advertisements or removed members could be loaded via web services using the load method
+ * The state report was showing wrong results for system / member account balance when there are chargebacks
+ * On profile or ad details, enumerated custom fields with parent fields had the first option selected when clicking modify / cancel, instead of the original value again
+ * Removing HTML tags from fields didn't handle spaces correctly on the output. This caused issues with indexing of HTML custom fields with nested tags
+ * Stop customizing an application page could lead to the old content being served
+ * On the login page, when pressing enter while on the login name field, the password field should receive focus
+ * Custom fields of type date, decimal or boolean, when used as search filters where always causing empty results
+ * For large number of results in export member records to CSV, an application error could happen
+ * It was possible to create an advertisement as scheduled with a future publication date, then changing it to permanent, making it appear first in the result list (which is ordered by publication start date)
+ * Entering invalid username in webshop payment generated an application error (and a new error log entry)
+
+New library dependencies
+ * hazelcast-1.9.4.8.jar
+
+Removed library dependencies
+ * hazelcast-1.9.4.4.jar
+
+New application translation keys
+ * accountFee.noMatchingMembers
+ * accountFee.title.logDetails
+ * accountFee.title.memberSearch
+ * accountFeeLog.acceptedInvoices
+ * accountFeeLog.count
+ * accountFeeLog.failedMembers
+ * accountFeeLog.finishDate
+ * accountFeeLog.finished
+ * accountFeeLog.neverRan
+ * accountFeeLog.openInvoices
+ * accountFeeLog.payments
+ * accountFeeLog.period
+ * accountFeeLog.processedMembers
+ * accountFeeLog.rechargeFailed
+ * accountFeeLog.rechargingFailed
+ * accountFeeLog.running
+ * accountFeeLog.skippedMembers
+ * accountFeeLog.status.ACCEPTED_INVOICE
+ * accountFeeLog.status.ERROR
+ * accountFeeLog.status.INVOICE
+ * accountFeeLog.status.OPEN_INVOICE
+ * accountFeeLog.status.PROCESSED
+ * accountFeeLog.status.SKIPPED
+ * accountFeeLog.status.TRANSFER
+ * accountFeeLog.stillRunning
+ * accountFeeLog.totalAmount
+ * accountFeeLog.totalCollectedAmount
+ * accountFeeLog.totalInvoices
+ * alert.member.nullIRate
+ * alert.system.ACCOUNT_FEE_FINISHED_WITH_ERRORS
+ * alert.system.accountFeeFinishedWithErrors
+ * alert.system.nullIRate
+ * group.account.pendingAccounts
+ * group.settings.showPosWebPaymentDescription
+ * group.title.settings.payments
+ * message.error.pendingMessagesToBeSent
+ * mobile.viewPayments.transactionNumber
+ * permission.adminMembers.changeEmail
+ * permission.brokerMembers.changeEmail
+ * permission.memberProfile.changeEmail
+ * posweb.bannerText
+ * smsMailing.byBroker.all
+
+Removed application translation keys
+ * accountFee.action.alreadyFinished
+ * accountFee.action.cancel.confirmation
+ * accountFee.action.canceled
+ * accountFee.action.recharge.confirmation
+ * accountFee.action.recharged
+ * accountFee.disableConfirmation
+ * accountFeeLog.status.CANCELED
+ * accountFeeLog.status.FINISHED
+ * accountFeeLog.status.NEVER_RAN
+ * accountFeeLog.status.PARTIALLY_FAILED
+ * accountFeeLog.status.RUNNING
+ * alert.system.ACCOUNT_FEE_CANCELLED
+ * alert.system.ACCOUNT_FEE_FAILED
+ * alert.system.ACCOUNT_FEE_RECOVERED
+ * alert.system.accountFeeCancelled
+ * alert.system.accountFeeFailed
+ * alert.system.accountFeeRecovered
+ * group.account.pendingInitialCredits
+ * group.title.settings.scheduledPayments
+ * lastTransaction.commit
+ * loan.title.canPerformExpiredAction
+ * permission.adminMemberRemarks
+ * permission.adminMemberRemarks.manage
+ * permission.adminMemberRemarks.view
+ * smsMailing.broker.group
+
+New setup translation keys
+ * setup.standalone.starting
+
+---------------------------------------------------------------------------
+
+Version 3.6
+-----------
+
+New / modified functions
+ * Improved HTML / JavaScript performance and standards compliance
+ * On the login form, pressing enter will focus the next field, or submit the form if on password field
+
+Bug fixes
+ * Members couldn't see their operators. After the first member listed his operators / groups, other members wouldn't be able to see their own operators
+ * When an installment of a scheduled payment when authorization is needed is authorized, it means now that on due dates, the next installments won't go through the authorization process again
+ * When exporting members or advertisements as CSV, the last record was not being included on the file
+ * Scheduled payments from system to member would result in a permission error if the receiver member would try to view the payment details
+ * It was not possible to save transaction fees
+ * When using a customized login page for group / group filter, clicking on access options would show the global login page
+ * Now the error page during posweb has the posweb header and footer (if customized, as they are empty by default)
+ * There were no confirmation messages for info texts being inserted or modified
+ * Operators without permissions to view his member's account couldn't do receive payments on WebPOS. Also, without the regular make payment permission, the WebPOS make payment permission was not enough
+ * When an account fee was disabled, then re-enabled in a future date, the next execution was being based on the last execution, not on the new enabling date
+ * Administrator notifications from payments made through external channels were not being sent
+ * When editing an existing customized file, after clicking change and then cancel, the contents were cleared
+ * A permission denied exception was thrown when chargeback a payment to system
+
+New library dependencies
+ * json_simple-1.1.jar
+
+New application translation keys
+ * createMember.created
+ * createMember.created.mailError
+ * settings.local.language.GREEK
+
+Removed application translation keys
+ * createMember.admin.created
+ * createMember.admin.created.mailError
+ * createMember.broker.created
+ * createMember.broker.created.mailError
+ * settings.local.language.Greek
+
+---------------------------------------------------------------------------
+
+Version 3.6_RC2
+---------------
+
+New / modified functions
+ * General auditing and review on security. Cyclos should be much more secure now
+ * Faster startup times
+ * Lots of performance improvements
+ * It is now possible to deploy Cyclos in a cluster, allowing not only high availability, but better scalability
+ * It is now possible to choose whether to log to trace file only if there were database writes
+ * Now logging generated from web service access goes to a separate file
+ * Added an access setting to allow or not concurrent logins from the same user
+ * Support was added to allow a WS client to set a trace data that will be transferred to the external WS implementors. For example: trace data attached to a payment done by WS will be transferred to the receiver through the corresponding notification generated from that payment
+ * Added the possibility to use a local receipt printer on PosWeb and in the main web interface for printing transaction receipts (a permission should be granted first)
+ * Processed payment requests can now be printed directly on the request payment page
+ * Now operators can filter the account history by operator, just like the member
+ * Payments generated through accepted invoices which were sent by operators can now be queried on the account history through the operator filter
+ * Added a blacklist and a whitelist for groups allowed to login in cyclos.properties
+ * Added 2 extra options for transaction fees as payer or receiver: source member broker and destination member broker
+ * Added to member group the default options for SMS notifications (allow charging, accept free mailings and accept paid mailings)
+ * When no card types or registration agreements, those no longer appear on group details page
+ * It is now possible to have ad interests only with title and type
+ * When there are pending commission contracts, the member home shows a link now
+ * The admin e-mail notification for new registered members has been extended not only to public registration, but now allows any member group and any type of registration
+ * On broker's registered members list the status filter for 'Awaiting activation' now only shows up if the broker's group has inactive groups as possible initial groups for registration
+ * Broker commissions paid by members now only allows the corresponding broker in relation to the member paying the commission (either source or destination). Previous versions allowed a quite strange combination of one member paying to the other one's broker, which conflicted with commission contracts and default commission settings
+ * Now it's possible to have a catalog with the SMS operations. This will allow, for example, add custom commands to the SMS module and set the corresponding message showed in the SMS log
+ * The state overview report now supports a date / time for historical data. However, this is not available for invoices, loans and references, as historical data is not stored
+ * Added a class name for callbacks on processed transactions in both transfer type (for specific transactions) and in local settings (for all transactions)
+ * Now there is a checkbox in the payment custom field to enable / disable it for new payments. It is not possible to remove custom fields once they are used
+ * Association or deactivation of new accounts now runs in background.
+
+Bug fixes
+ * When inserting advertisement categories, the newly created category's order was not at the end of the list
+ * When mixing scheduled payments which reserve the total amount with authorized payments, amount reservations were not being correctly returned
+ * On posweb access, if the user had an expired password, he/she'd not be forced to change
+ * On posweb access, if the member had a pending registration agreement, he/she'd not be forced to accept it
+ * Limited system accounts with credit limit greater than zero were not honoring the limit
+ * The form for new static document and edit member document didn't work on Google Chrome
+ * Removing images didn't remove them from disk cache on the server
+ * It was not being validated that a payment cannot be performed if there are pending commission contracts
+ * On database creation groups with associated accounts were not set active
+ * On the edit transfer type page, scheduled payment settings shouldn't be displayed for loans
+ * Customized files which are no longer used will be automatically removed from database on next startup
+ * On the account fees log file, when a fee is finished, the log was being generated as if it were starting
+
+New library dependencies
+ * FastInfoset-1.2.9.jar
+ * antlr-2.7.7.jar
+ * cxf-2.4.4.jar
+ * ehcache-core-2.4.6.jar
+ * hazelcast-1.9.4.4.jar
+ * hibernate-3.6.8.jar
+ * hibernate-jpa-2.0-api-1.0.1.Final.jar
+ * lucene-analyzers-3.4.0.jar
+ * lucene-core-3.4.0.jar
+ * lucene-misc-3.4.0.jar
+ * lucene-queries-3.4.0.jar
+ * mysql-connector-java-5.1.18.jar
+ * neethi-3.0.0.jar
+ * neethi-3.0.1.jar
+ * org.springframework.aop-3.0.6.RELEASE.jar
+ * org.springframework.asm-3.0.6.RELEASE.jar
+ * org.springframework.beans-3.0.6.RELEASE.jar
+ * org.springframework.context-3.0.6.RELEASE.jar
+ * org.springframework.context.support-3.0.6.RELEASE.jar
+ * org.springframework.core-3.0.6.RELEASE.jar
+ * org.springframework.expression-3.0.6.RELEASE.jar
+ * org.springframework.jdbc-3.0.6.RELEASE.jar
+ * org.springframework.orm-3.0.6.RELEASE.jar
+ * org.springframework.transaction-3.0.6.RELEASE.jar
+ * org.springframework.web-3.0.6.RELEASE.jar
+ * xmlschema-core-2.0.1.jar
+
+Removed library dependencies
+ * FastInfoset-1.2.7.jar
+ * XmlSchema-1.4.5.jar
+ * antlr-2.7.6.jar
+ * cxf-2.3.0.jar
+ * ehcache-core-2.3.2.jar
+ * geronimo-annotation_1.0_spec-1.1.1.jar
+ * geronimo-stax-api_1.0_spec-1.0.1.jar
+ * geronimo-ws-metadata_2.0_spec-1.1.2.jar
+ * hibernate-3.6.1.jar
+ * hibernate-jpa-2.0-api-1.0.0.Final.jar
+ * hsqldb.jar
+ * jakarta-oro.jar
+ * jaxb-api-2.2.1.jar
+ * jaxb-impl-2.2.1.1.jar
+ * jaxen-1.1.1.jar
+ * jaxws-api-2.1-1.jar
+ * jdom-1.0.jar
+ * lucene-analyzers-3.0.1.jar
+ * lucene-core-3.0.1.jar
+ * lucene-misc-3.0.1.jar
+ * lucene-queries-3.0.1.jar
+ * mysql-connector-java-5.1.10-bin.jar
+ * neethi-2.0.4.jar
+ * org.springframework.aop-3.0.4.RELEASE.jar
+ * org.springframework.asm-3.0.4.RELEASE.jar
+ * org.springframework.beans-3.0.4.RELEASE.jar
+ * org.springframework.context-3.0.4.RELEASE.jar
+ * org.springframework.context.support-3.0.4.RELEASE.jar
+ * org.springframework.core-3.0.4.RELEASE.jar
+ * org.springframework.expression-3.0.4.RELEASE.jar
+ * org.springframework.jdbc-3.0.4.RELEASE.jar
+ * org.springframework.orm-3.0.4.RELEASE.jar
+ * org.springframework.transaction-3.0.4.RELEASE.jar
+ * org.springframework.web-3.0.4.RELEASE.jar
+ * saaj-api-1.3.jar
+ * saaj-impl-1.3.2.jar
+ * stax-utils-20060502.jar
+ * wss4j-1.5.8.jar
+ * wstx-asl-3.2.9.jar
+
+New help files
+ * preferences.jsp
+
+Removed help files
+ * notifications.jsp
+
+New application translation keys
+ * account.iRate
+ * accountFee.error.multipleVolumeFees
+ * accountFee.error.mustRechargeOldestLogFirst
+ * alert.member.ACCOUNT_ACTIVATION_FAILED
+ * alert.member.INITIAL_CREDIT_FAILED
+ * alert.member.NULL_IRATE
+ * alert.member.accountActivationFailed
+ * alert.member.initialCreditFailed
+ * alert.member.nullIrate
+ * alert.system.NULL_IRATE
+ * alert.system.RATE_INITIALIZATION_FINISHED
+ * alert.system.RATE_INITIALIZATION_STARTED
+ * alert.system.nullIrate
+ * alert.system.rateInitializationFinished
+ * alert.system.rateInitializationStarted
+ * brokerCommissionContract.error.contractNotFound
+ * brokerCommissionContract.title.view
+ * changePassword.currentPassword
+ * channel.enableSMS
+ * channel.enableSMSLinkTo
+ * channel.internalNameAlreadyInUse
+ * currency.enableIRate
+ * currency.pendingRateInitProgression
+ * currency.rates
+ * customField.member.error.indexingVisibility
+ * customField.payment.enabled
+ * error.aRateParameters.noFutureInitEmission
+ * error.iRateParameters.notOffLine
+ * error.rateParameters.creationExpirationSmallerThanEmission
+ * error.rateParameters.initExpirationBeforeEmission
+ * error.session.timeout
+ * errors.javaClass
+ * errors.pageNotFound
+ * global.iRate.steps
+ * group.account.pendingInitialCredits
+ * group.defaultAcceptFreeMailing
+ * group.defaultAcceptPaidMailing
+ * group.defaultAllowChargingSms
+ * group.invalidNature
+ * help.title.preferences
+ * home.status.hasPendingCommissionContracts
+ * login.error.alreadyConnected
+ * login.redirectFromMessage
+ * memberImport.status.INVALID_CUSTOM_FIELD_VALUE_MAX_LENGTH
+ * memberImport.status.INVALID_CUSTOM_FIELD_VALUE_MIN_LENGTH
+ * memberImport.status.INVALID_CUSTOM_FIELD_VALUE_UNIQUE
+ * memberPos.assign.memberWithoutAccount
+ * menu.member.preferences.receiptPrinterSettings
+ * menu.operator.preferences.receiptPrinterSettings
+ * payment.error.manageFrom
+ * payment.error.manageRelates
+ * payment.error.ratesRequiresLocksOnAllAccounts
+ * payment.error.relatesTo
+ * paymentRequest.error.invalidChannel
+ * permission.adminMemberPos.changeParameters
+ * permission.adminMemberPos.changePin
+ * permission.memberPreferences.manageReceiptPrinterSettings
+ * permission.memberReceiptPrinterSettings
+ * permission.memberReceiptPrinterSettings.manage
+ * permission.operatorPayments.poswebMakePayment
+ * permission.operatorPayments.poswebReceivePayment
+ * permission.systemPayments.blockScheduled
+ * permission.systemPayments.cancelScheduled
+ * posweb.action.printSettings
+ * posweb.action.searchTransactions
+ * posweb.printSettings.title
+ * posweb.searchTransactions.noTransactions
+ * posweb.searchTransactions.print
+ * posweb.searchTransactions.title
+ * posweb.searchTransactions.title.scheduledPayments
+ * posweb.searchTransactions.title.transactions
+ * rates.a
+ * rates.d
+ * rates.error.initializationAlreadyRunning
+ * rates.error.notOnlineWhileRateInitsPending
+ * rates.error.pendingRateExists
+ * rates.error.rateNotEnabledForInit
+ * rates.error.reinitValidation.noEditDuringRateReinit
+ * rates.error.reinitValidation.noRateSpecified
+ * rates.error.reinitValidation.reinitDateAfterEnableDate
+ * rates.i
+ * rates.message.initializationAlreadyRunning
+ * rates.reinit.date
+ * rates.reinit.enabledSince
+ * rates.reinit.maintainLast
+ * rates.reinit.reinit
+ * rates.reinit.type
+ * rates.reinit.warning
+ * rates.reinitialize
+ * receipt.posweb.transactions.date
+ * receipt.posweb.transactions.header
+ * receipt.posweb.transactions.member
+ * receipt.posweb.transactions.noTransfers
+ * receipt.posweb.transactions.scheduledPayment
+ * receipt.posweb.transactions.scheduledPayments
+ * receipt.posweb.transactions.transfer
+ * receipt.posweb.transactions.transfers
+ * receipt.transfer.amount
+ * receipt.transfer.date
+ * receipt.transfer.from
+ * receipt.transfer.header
+ * receipt.transfer.installment
+ * receipt.transfer.installments
+ * receipt.transfer.scheduledFor
+ * receipt.transfer.status
+ * receipt.transfer.textAfter
+ * receipt.transfer.textBefore
+ * receipt.transfer.to
+ * receipt.transfer.transactionNumber
+ * receiptPrinter.error.applet
+ * receiptPrinter.error.ie
+ * receiptPrinter.error.noConfiguration
+ * receiptPrinter.error.printerNotFoundError
+ * receiptPrinterSettings.beginOfDocCommand
+ * receiptPrinterSettings.created
+ * receiptPrinterSettings.endOfDocCommand
+ * receiptPrinterSettings.helpMessage
+ * receiptPrinterSettings.localPrinter
+ * receiptPrinterSettings.localPrinter.defaultBrowserPrinting
+ * receiptPrinterSettings.modified
+ * receiptPrinterSettings.name
+ * receiptPrinterSettings.new
+ * receiptPrinterSettings.paymentAdditionalMessage
+ * receiptPrinterSettings.printerName
+ * receiptPrinterSettings.remove.confirm
+ * receiptPrinterSettings.removed
+ * receiptPrinterSettings.title.list
+ * receiptPrinterSettings.title.modify
+ * receiptPrinterSettings.title.new
+ * reference.transactionFeedback.feedbackPeriodExpired
+ * serviceClient.ignoreRegistrationValidations
+ * settings.access.allowMultipleLogins
+ * settings.local.extra
+ * settings.local.transferListenerClass
+ * settings.log.traceWritesOnly
+ * settings.log.webServiceFile
+ * settings.log.webServiceLevel
+ * settings.log.webServiceLevel.DETAILED
+ * settings.log.webServiceLevel.ERRORS
+ * settings.log.webServiceLevel.OFF
+ * settings.log.webServiceLevel.SIMPLE
+ * sms.type.ACCOUNT_DETAILS.description
+ * sms.type.ACCOUNT_DETAILS_ERROR.description
+ * sms.type.GENERAL.description
+ * sms.type.HELP.description
+ * sms.type.HELP_ERROR.description
+ * sms.type.INFO_TEXT.description
+ * sms.type.INFO_TEXT_ERROR.description
+ * sms.type.OPERATION_CONFIRMATION.description
+ * sms.type.PAYMENT.description
+ * sms.type.PAYMENT_ERROR.description
+ * sms.type.REQUEST_PAYMENT.description
+ * sms.type.REQUEST_PAYMENT_ERROR.description
+ * transactionFee.subject.DESTINATION_BROKER
+ * transactionFee.subject.SOURCE_BROKER
+ * transfer.guarantee
+ * transfer.guarantee.details
+ * transfer.hour
+ * transferType.transferListenerClass
+
+Removed application translation keys
+ * accountFee.tolerance
+ * adInterest.error.missingData
+ * alert.member.NULL_RATE
+ * alert.member.nullRate
+ * alert.system.NULL_RATE
+ * alert.system.nullRate
+ * customField.error.invalidValidatorClass
+ * help.title.notifications
+ * loan.title.canPerformExpiredAction
+ * paymentRequest.error.member
+ * permission.adminMemberInvoices.directSend
+ * permission.adminMemberPayments.directPayment
+ * permission.adminMemberPos.changeParameters
+ * permission.adminMemberPos.changePin
+ * permission.basic.quickAccess
+ * permission.memberCommissions
+ * permission.memberCommissions.view
+ * permission.memberInvoices.directSendToMember
+ * permission.memberPayments.directPaymentToMember
+ * permission.operatorInvoices.directSendToMember
+ * permission.operatorPayments.directPaymentToMember
+ * permission.operatorPayments.externalMakePayment
+ * permission.operatorPayments.externalReceivePayment
+
+---------------------------------------------------------------------------
+
+Version 3.6_RC1a
+----------------
+
+New / modified functions
+ * Added to the web service client the possibility to ignore e-mail and custom field validations for member registrations
+
+Bug fixes
+ * On broker group permissions, transfer types for chargebacks and channels for request payment were not being saved
+ * It was not possible to remove a member's broker. It is now possible on the change broker to leave the new broker empty
+ * Broker commissions for newly created brokers were not being paid, until the first customization of default commission status
+ * Fees with a very small percentage on small payments which generated amounts smaller than than 0.01 (depending on the precision) could generate payments of amount zero, which caused errors
+ * A member was able to pay via Web services to another member he couldn't see the profile
+ * Theme was not persisted when applied and an image referenced by it didn't previously exist
+
+---------------------------------------------------------------------------
+
+Version 3.6_RC1
+---------------
+
+New / modified functions
+ * Several database queries have been optimized, which yields noticeable performance improvements in large databases
+ * Now, for new databases, a per-user hash is used, which is more secure
+ * Now making payments no longer forces the user to keep waiting until it is processed
+ * All themes have been improved
+ * A broker can now register another broker
+ * Various performance improvements have been implemented
+ * Implemented various security fixes
+ * Now channels can have multiple ways to identify members, which, for example, allows members to login by custom fields or e-mail
+ * New web service operations, which allows managing members
+ * Format of integer values were added to the Current State Overview report
+ * A new chargeback status was added to the chargeback/reverse WebServices operations: TRANSFER_NOT_FOUND
+ * The account history print report has been modified to show the member name or username depending on the settings
+ * The account history and reports (CSV generation and printing) can be limited to a maximum number of results according to a setting
+ * The description field has been added to imported transactions
+ * A web service client which is not restricted to member could be set to always check credentials
+ * A system payment can be approved by the receiver (only first level)
+ * Authorizing a guarantee will also authorize the corresponding loan if the same user is the authorizer for both and he checked to do it.
+ * Several enhancements to web service methods and SMS integration
+ * Now the sms channel used to operate by sms can be set in the local setting page (sms section)
+ * Now a different translation message is used for pos web payments on not enough credits error
+ * If there are circular fees, which would lead to an eternal loop, an specific error is displayed
+ * Now the account fee charging happens in smaller database transactions, which speeds up charging on large databases
+ * Added permissions to change a member name and username
+ * New properties regarding to external web services SSL connection and timeouts were added
+ * The payment request search page was improved showing useful data (ticket creation date, request/confirmation channel)
+ * Now Broker/Admin can select a member as the target of a SMS mailing
+ * Added an option in cyclos.properties to skip members and advertisements ordering, not to impact performance too much on large databases
+ * Now the history for system accounts is initially filtered for payments starting at the first day of the previous month, so that on large databases, the impact will be low for system accounts, which tend to have many payments
+ * Allows searching advertisements via web services by status
+ * Allows searching members via web services by e-mail
+ * Added the info texts, which are messages which can be retrieved through web services
+ * Now, if there are missing translation keys, the English translations will be used
+ * Now, for a group password policy, it is possible to require letters, digits and special characters in passwords
+ * Messages sent from admins to groups or from brokers to their members are now sent in the background, and the copy on the sent items will show how many internal messages / mails were sent
+ * Simplified the settings for message format: Now there's only one option for message format, the the options (for both ad descriptions and messages) can be either plain text or rich text (no user choice anymore)
+ * Added an option on transfer types to allow SMS notifications
+ * Improved the SMS log search and report
+
+Bug fixes
+ * Some request parameters were not being sanitized, allowing XSS
+ * Some urls were not protected from unauthorized access
+ * Once the transaction password has been disabled in group edition, it can't be enabled again.
+ * Page breaks were added to the printed manual
+ * A negative value could be entered in the deactivation time for exceeded the max. PIN tries field
+ * In Internet Explorer, text areas and rich texts on custom fields were too wide
+ * Loan details are showing the currency simbol
+ * Now you can remove a currency that has an aRate or dRate
+ * Ad webservice is formatting the price
+ * Category counter now count the categories correctly
+ * Bookeeping, now you see the right field classification when editing a mapped field.
+ * Bookeeping fields order are correct after removing a mapping
+ * It wasn't possible to remove a member from the broker's member list
+ * Operator weren't able to send an invoice
+ * Notifications sent by e-mail to administrators were not sent on background, causing the process to hang until the e-mail was sent
+ * If the PIN (Card Security Code) was blocked and the blocked time (after max wrong tries) was expired then the PIN (Card Security Code) never could be unblocked
+ * The member transaction summary report was not returning all data when the member result display (in local settings) was set to username
+ * On web services, loading an advertisement was not returning the custom fields
+ * Searching members / ads using keywords (full text search) and filtering with enumerated custom fields always had no results
+ * The search invoices was not using the setting to display members as name / username - username was always being used
+ * The confirm webshop payment page was displaying a selection field for principal type when only a single option was allowed
+ * Searching member record types using keywords by admins was never returning results
+ * Scheduled payments which reserved the total amount were not validating the account balance
+ * Canceling scheduled payment installments with a reserved amount didn't return the reserved amount to the account
+ * The external login was only usable if the script tag including the cyclos_root/externalLogin.js was the first script tag on the document
+ * The member transaction details was printing the inverse signal on transactions
+ * When using zero as max print results, print pages were returning no results, instead of unlimited (which is the semantic of max = zero)
+ * Custom fields which used text areas were not allowing input if the max length was not defined
+ * The account status for scheduled payments was being correctly updated
+ * Some payment notifications were not correct
+ * Members were not being able to see the 'brokering events' notification type in the notification preferences page. This type is only shown to member with a broker
+ * If a payment is set to be authorized by a broker, and the member receiving the payment chose not to be notified, the broker also wouldn't be notified about the authorization
+ * When an invoice expired, the member which sent it was being notified twice, and the receiver was not being notified
+ * Manually processing an scheduled payment was not generating notifications
+ * The low units notification was never being sent
+ * In Firefox, if Cyclos was running in an iframe, every click on links would make a jumpy box appear for a few instants
+ * Alerts were not being notified by e-mail to admins
+ * A payment which is charged back on the same day should subtract the amount from the max amount per day
+ * If the admin removes the permission for a group for a given transfer type, and a member had an scheduled payment of that type, he could still manually process an installment
+ * When using a timezone, the scheduling hour was being considered as the local server's time, not as the Cyclos instance time
+ * The semantics when setting an advertisement category to active / inactive were sometimes not correct
+ * The transaction number was not being assigned for scheduled payments
+ * If the public registration was in a group which has a customized login page, after confirming the registration, that customized login page was not being displayed
+ * Invoices search was missing the result pagination
+ * In the notification translation, changed the SMS one-line text field to a multi-line field
+ * Admin records were not showing up
+ * Right after inserting a new document, if the admin tried to view that document on a member's profile, there would be a permission denied error
+ * The load by username on login was being performed 3 times
+ * Make sure that all updates occur only on actually modified columns (avoids missing data concurrent updates for different columns)
+ * Payments as member by admins for authorized payments, when the same admin performing the payment is also the authorizer could lead to incorrect account balance
+ * Error when a member was changing his operator's password
+ * Print account history was not showing charged back payments as strike-through
+ * When multiple rich text editors were displayed on the same page, in Firefox 4, only the last one was editable
+ * On the member transaction summary report, on transaction details, chargebacks were sometimes being displayed with the wrong sign
+ * On member import, when importing a non-existing value for enumerated custom field, the error message was incomplete
+ * When saving / activating / deactivating an advertisement category, the counters would sometimes be incorrect
+ * There was an error when an operators would attempt to accept an invoice
+ * Linked (parent-child) custom fields for payments was not working
+ * Previously, on the member transactions report summary, payment filters only with system to member payments would never show a debits column. The same for member to system and credits. This prevented chargebacks from showing up. So, now all columns are shown (depending solely on the checkboxes for debits / credits)
+ * After including a login form from another website, if the user performed a 'regular' login in cyclos, after logging out, the user would still be redirected to the url passed by the external login form
+ * The account history for removed member was not visible
+ * It was possible to chargeback a transfer from / to a removed member
+ * When moving an user to a removed group, if the user was logged in, his session would still be valid (until logging out / timeout). Now the user is immediately disconnected.
+ * On Internet Explorer, the layout for search POS devices and SMS logs reports was broken
+ * The 'performed by' (admin / broker / operator) field was not being copied from transfers to the generated fees
+ * Printing the manual would lead to wrong formatting
+ * On the ads search, after searching with groups or group filters on the search, it was not possible to uncheck them (unless clicking the menu item again)
+
+New library dependencies
+ * cglib-nodep-2.2.jar
+ * commons-chain-1.2.jar
+ * commons-digester-1.8.jar
+ * commons-lang-2.5.jar
+ * cxf-2.3.0.jar
+ * ehcache-core-2.3.2.jar
+ * hibernate-3.6.1.jar
+ * hibernate-jpa-2.0-api-1.0.0.Final.jar
+ * jaxb-api-2.2.1.jar
+ * jaxb-impl-2.2.1.1.jar
+ * jaxen-1.1.1.jar
+ * jstl-1.1.jar
+ * jtidy-r938.jar
+ * org.springframework.aop-3.0.4.RELEASE.jar
+ * org.springframework.asm-3.0.4.RELEASE.jar
+ * org.springframework.beans-3.0.4.RELEASE.jar
+ * org.springframework.context-3.0.4.RELEASE.jar
+ * org.springframework.context.support-3.0.4.RELEASE.jar
+ * org.springframework.core-3.0.4.RELEASE.jar
+ * org.springframework.expression-3.0.4.RELEASE.jar
+ * org.springframework.jdbc-3.0.4.RELEASE.jar
+ * org.springframework.orm-3.0.4.RELEASE.jar
+ * org.springframework.transaction-3.0.4.RELEASE.jar
+ * org.springframework.web-3.0.4.RELEASE.jar
+ * standard-1.1.2.jar
+ * struts-core-1.3.10.jar
+ * struts-extras-1.3.10.jar
+ * struts-taglib-1.3.10.jar
+ * struts-tiles-1.3.10.jar
+
+Removed library dependencies
+ * cglib-nodep-2.1_3.jar
+ * commons-digester-1.7.jar
+ * commons-lang-2.1.jar
+ * cxf-2.2.6.jar
+ * hibernate-3.3.2.jar
+ * hibernate-commons-annotations.jar
+ * jaxb-api-2.1.jar
+ * jaxb-impl-2.1.12.jar
+ * jaxen-1.1.jar
+ * jstl.jar
+ * oscache-2.4.jar
+ * spring-2.0.8.jar
+ * standard.jar
+ * struts-1.2.9.jar
+
+New application translation keys
+ * accountFeeLog.status.PARTIALLY_FAILED
+ * adCategory.error.cantActivateCategoryWithInactiveParent
+ * alert.member.LOGIN_BLOCKED_BY_PERMISSION_DENIEDS
+ * alert.member.NULL_RATE
+ * alert.member.loginBlockedByPermissionDenieds
+ * alert.system.ADMIN_LOGIN_BLOCKED_BY_PERMISSION_DENIEDS
+ * alert.system.NULL_RATE
+ * alert.system.adminLoginBlockedByPermissionDenieds
+ * alert.system.adminTransactionPasswordBlockedByTries
+ * card.changeSecurityCode.error.obvious
+ * card.securityCode
+ * cardType.showCardSecurityCode
+ * changeGroup.error.move.hasBalance
+ * changeGroup.error.move.hasOpenInvoices
+ * changeGroup.error.move.hasOpenLoans
+ * changeGroup.error.move.hasPendingScheduledPayments
+ * changeGroup.error.remove.hasOpenLoans
+ * changeGroup.error.remove.hasPendingScheduledPayments
+ * changePassword.error.mustContainOnlyLettersOrNumbers
+ * changePassword.error.mustIncludeLettersNumbersSpecial
+ * changePassword.error.obvious
+ * changePassword.error.userBlocked
+ * changePassword.forceChange
+ * changePassword.newPassword
+ * changePassword.newPasswordConfirmation
+ * changePassword.oldPassword
+ * changePin.error.obvious
+ * changePin.newPin
+ * changePin.newPinConfirmation
+ * channel.defaultPrincipal
+ * channel.principals
+ * conversionSimulation.result.total
+ * customImage.system.active
+ * customImage.system.calendar
+ * customImage.system.captchaBackground
+ * customImage.system.checked
+ * customImage.system.conciliated
+ * customImage.system.delete
+ * customImage.system.dropdown
+ * customImage.system.edit
+ * customImage.system.edit_gray
+ * customImage.system.help
+ * customImage.system.icon
+ * customImage.system.import
+ * customImage.system.inactive
+ * customImage.system.incomplete
+ * customImage.system.message_read
+ * customImage.system.message_removed
+ * customImage.system.message_replied
+ * customImage.system.message_unread
+ * customImage.system.mobileLogo
+ * customImage.system.next
+ * customImage.system.noPicture
+ * customImage.system.pay
+ * customImage.system.pending
+ * customImage.system.permissions
+ * customImage.system.permissions_gray
+ * customImage.system.preview
+ * customImage.system.previous
+ * customImage.system.print
+ * customImage.system.quickAccess_accountInfo
+ * customImage.system.quickAccess_contacts
+ * customImage.system.quickAccess_makePayment
+ * customImage.system.quickAccess_messages
+ * customImage.system.quickAccess_placeAd
+ * customImage.system.quickAccess_searchAds
+ * customImage.system.quickAccess_updateProfile
+ * customImage.system.save
+ * customImage.system.systemLogo
+ * customImage.system.view
+ * error.image.dimension
+ * error.systemOverloaded
+ * externalAccountHistory.transferImport.title
+ * externalTransfer.description
+ * fieldMapping.field.DESCRIPTION
+ * global.no.defined
+ * global.textFormat.PLAIN
+ * global.textFormat.RICH
+ * global.timePeriod.invalid
+ * global.total
+ * group.error.passwordPolicyNumeric
+ * group.error.passwordPolicySpecialVirtualKeyboard
+ * group.settings.emailValidation.EXTERNAL
+ * group.settings.passwordPolicy.AVOID_OBVIOUS_LETTERS_NUMBERS_SPECIAL
+ * group.settings.pinBlockTimeAfterMaxTries.number
+ * group.settings.smsAdditionalCharged
+ * group.settings.smsAdditionalChargedPeriod
+ * group.settings.smsContextClassName
+ * group.settings.smsCustomContext
+ * group.settings.smsCustomContextInvalid
+ * group.settings.smsFree
+ * group.settings.smsShowFreeThreshold
+ * guarantee.automaticLoanAuthorization
+ * guarantee.error.invalidGuarantee
+ * infoText.empty.subject
+ * infoText.enabled
+ * infoText.end
+ * infoText.errorRemoving
+ * infoText.new
+ * infoText.noMatch
+ * infoText.nomatch.subject
+ * infoText.removeConfirmation
+ * infoText.removed
+ * infoText.start
+ * infoText.title.edit
+ * infoText.title.new
+ * infoText.title.search
+ * infoText.validity
+ * infotext.active
+ * infotext.aliases
+ * infotext.body
+ * infotext.subject
+ * invoice.destinationAccountType
+ * login.accessOptions
+ * login.accessUsing
+ * login.memberUsername
+ * menu.admin.messages.infoTexts
+ * menu.admin.messages.smsMailings
+ * menu.member.broker.smsMailings
+ * message.emailsSent
+ * message.messagesSent
+ * message.stillSending
+ * mobile.login.accessUsing
+ * notificationPreferences.acceptFreeMailing
+ * notificationPreferences.acceptPaidMailing
+ * notificationPreferences.allowChargingSms
+ * notificationPreferences.allowChargingSmsPackage
+ * notificationPreferences.costPerAdditionalMessages
+ * notificationPreferences.costPerMessage
+ * notificationPreferences.disableSms
+ * notificationPreferences.disableSms.confirmation
+ * notificationPreferences.enableSmsOperations
+ * notificationPreferences.freeSmsUsed
+ * notificationPreferences.my.title.name
+ * notificationPreferences.noPaidSmsLeft
+ * notificationPreferences.paidSmsLeft
+ * notificationPreferences.selectAll
+ * notificationPreferences.selectNone
+ * notificationPreferences.smsHeading
+ * payment.error.circularFees
+ * payment.error.enoughCreditsOtherAccount
+ * payment.error.negativeFinalAmount
+ * paymentRequest.error.member
+ * paymentRequest.error.noChannels
+ * paymentRequest.error.sending
+ * permission.adminMemberPos.unblockPin
+ * permission.adminMemberPreferences
+ * permission.adminMemberPreferences.manageNotifications
+ * permission.adminMemberSmsMailings
+ * permission.adminMemberSmsMailings.freeSmsMailings
+ * permission.adminMemberSmsMailings.paidSmsMailings
+ * permission.adminMemberSmsMailings.view
+ * permission.adminMembers.changeName
+ * permission.adminMembers.changeUsername
+ * permission.brokerMembers.changeName
+ * permission.brokerMembers.changeUsername
+ * permission.brokerPos.unblockPin
+ * permission.brokerPreferences
+ * permission.brokerPreferences.manageNotifications
+ * permission.brokerSmsMailings
+ * permission.brokerSmsMailings.freeSmsMailings
+ * permission.brokerSmsMailings.paidSmsMailings
+ * permission.memberProfile.changeName
+ * permission.memberProfile.changeUsername
+ * permission.systemInfoTexts
+ * permission.systemInfoTexts.manage
+ * permission.systemInfoTexts.view
+ * pos.actions.unblockPin
+ * pos.pinUnblocked
+ * pos.unblockPin.confirmation
+ * posweb.error.notEnoughCredits
+ * profile.action.manageNotifications
+ * profile.action.preferencesActions
+ * quickAccess.accountInfo
+ * reports.print.limitation
+ * serviceClient.credentialsRequired
+ * serviceOperation.INFO_TEXTS
+ * serviceOperation.MANAGE_MEMBERS
+ * serviceOperation.SMS
+ * settings.access.error.numericPassword.groupsRequireLetters
+ * settings.access.error.virtualKeyboard.groupsRequireSpecial
+ * settings.local.emailUnique
+ * settings.local.maxIteratorResults
+ * settings.local.messageFormat
+ * settings.local.sms.channel
+ * settings.local.sms.customField
+ * settings.message.adminPendingBuyerOnlyGuarantee
+ * settings.message.adminPendingGuarantee
+ * settings.message.cardSecurityCodeBlocked
+ * settings.message.externalChannelPaymentPerformed
+ * settings.message.externalChannelPaymentRequestExpiredPayer
+ * settings.message.externalChannelPaymentRequestExpiredReceiver
+ * settings.message.newPendingPaymentByPayer
+ * settings.message.posPinBlocked
+ * sms.error.type.ALLOW_CHARGING_DISABLED
+ * sms.error.type.NOT_ENOUGH_FUNDS
+ * sms.error.type.NO_PHONE
+ * sms.error.type.NO_SMS_LEFT
+ * sms.error.type.SEND_ERROR
+ * sms.type.ACCOUNT_DETAILS
+ * sms.type.ACCOUNT_DETAILS_ERROR
+ * sms.type.GENERAL
+ * sms.type.HELP
+ * sms.type.HELP_ERROR
+ * sms.type.INFO_TEXT
+ * sms.type.INFO_TEXT_ERROR
+ * sms.type.OPERATION_CONFIRMATION
+ * sms.type.PAYMENT
+ * sms.type.PAYMENT_ERROR
+ * sms.type.REQUEST_PAYMENT
+ * sms.type.REQUEST_PAYMENT_ERROR
+ * smsLog.free
+ * smsLog.mailingType
+ * smsLog.messageType
+ * smsLog.smsType
+ * smsLog.status.DELIVERED
+ * smsLog.status.ERROR
+ * smsLog.type
+ * smsLog.type.MAILING
+ * smsLog.type.NOTIFICATION
+ * smsLog.type.SMS_OPERATION
+ * smsMailing.broker.all
+ * smsMailing.broker.group
+ * smsMailing.by
+ * smsMailing.date
+ * smsMailing.error.noMobilePhone
+ * smsMailing.groups
+ * smsMailing.mailingType.FREE_FROM_BROKER
+ * smsMailing.mailingType.FREE_TO_GROUP
+ * smsMailing.mailingType.INDIVIDUAL
+ * smsMailing.mailingType.PAID_FROM_BROKER
+ * smsMailing.mailingType.PAID_TO_GROUP
+ * smsMailing.member
+ * smsMailing.new
+ * smsMailing.recipients
+ * smsMailing.search.noResults
+ * smsMailing.sendType
+ * smsMailing.sendType.group
+ * smsMailing.sendType.member
+ * smsMailing.sent
+ * smsMailing.sentSms
+ * smsMailing.stillSending
+ * smsMailing.text
+ * smsMailing.title.search
+ * smsMailing.title.send
+ * smsMailing.type
+ * smsMailing.type.FREE
+ * smsMailing.type.PAID
+ * ticket.date
+ * ticket.fromChannel
+ * ticket.toChannel
+ * transfer.commision.broker.notcommision
+ * transferType.allowSmsNotification
+ * transferType.reserveTotalAmountOnScheduling
+
+Removed application translation keys
+ * account.creditsPendingAuthorization
+ * accountFeeLog.status.FAILED
+ * alert.system.adminTransactionPasswordBlockedByTrials
+ * changePassword.currentPassword
+ * changePassword.error.tooSimple
+ * changePassword.forceChangeOnNextLogin
+ * changePassword.newPassword1
+ * changePassword.newPassword2
+ * changePin.error.tooSimple
+ * changePin.newPin1
+ * changePin.newPin2
+ * channel.principal
+ * channel.principal.ANY
+ * channel.principal.CARD
+ * channel.principal.USER
+ * customImage.system.active.gif
+ * customImage.system.calendar.gif
+ * customImage.system.captchaBackground.jpg
+ * customImage.system.checked.gif
+ * customImage.system.conciliated.gif
+ * customImage.system.delete.gif
+ * customImage.system.dropdown.gif
+ * customImage.system.edit.gif
+ * customImage.system.edit_gray.gif
+ * customImage.system.help.gif
+ * customImage.system.icon.ico
+ * customImage.system.import.gif
+ * customImage.system.inactive.gif
+ * customImage.system.incomplete.gif
+ * customImage.system.message_read.gif
+ * customImage.system.message_removed.gif
+ * customImage.system.message_replied.gif
+ * customImage.system.message_unread.gif
+ * customImage.system.mobileLogo.gif
+ * customImage.system.next.gif
+ * customImage.system.noPicture.gif
+ * customImage.system.pay.gif
+ * customImage.system.pending.gif
+ * customImage.system.permissions.gif
+ * customImage.system.permissions_gray.gif
+ * customImage.system.preview.gif
+ * customImage.system.previous.gif
+ * customImage.system.print.gif
+ * customImage.system.quickAccess_contacts.png
+ * customImage.system.quickAccess_makePayment.png
+ * customImage.system.quickAccess_messages.png
+ * customImage.system.quickAccess_placeAd.png
+ * customImage.system.quickAccess_searchAds.png
+ * customImage.system.quickAccess_updateProfile.png
+ * customImage.system.save.gif
+ * customImage.system.systemLogo.gif
+ * customImage.system.view.gif
+ * global.textFormat.BOTH_DEFAULT_PLAIN_TEXT
+ * global.textFormat.BOTH_DEFAULT_RICH_TEXT
+ * global.textFormat.PLAIN_TEXT_ONLY
+ * global.textFormat.RICH_TEXT_ONLY
+ * global.textFormat.plainText
+ * global.textFormat.richText
+ * guarantee.enabledGuaranteeType
+ * login.member
+ * member.memberUsername
+ * message.received.fromAdministration
+ * message.received.fromMember
+ * mobile.login.username
+ * payment.awaitingProcessing
+ * payment.pendingProcessing
+ * payment.title.awaitingProcessing
+ * paymentRequest.error.INVALID_MEMBER
+ * paymentRequest.error.SYSTEM_OFFLINE
+ * paymentRequest.error.UNKNOWN_ERROR
+ * permission.operatorReferences.give
+ * settings.local.simpleMessageFormat
+ * settings.local.toBrokeredMembersMessageFormat
+ * settings.local.toGroupMessageFormat
+ * settings.message.pendingBuyerOnlyGuaranteeAdmin
+ * settings.message.pendingGuaranteeAdmin
+ * smsLog.status.CHARGE_FAILED
+ * smsLog.status.FAILED
+ * smsLog.status.INVALID_MEMBER
+ * smsLog.status.NOT_ENOUGH_CREDITS
+ * smsLog.status.SUCCESS
+ * smsLog.status.SYSTEM_OFFLINE
+ * smsLog.status.UNKNOWN_ERROR
+ * smsLogs.CHARGE_FAILED
+ * transferType.reserveTotalAmountOnSchedling
+
+New setup translation keys
+ * settings.message.admin-payment-from-member-to-system.body
+ * settings.message.admin-payment-from-member-to-system.subject
+ * settings.message.admin-payment-from-system-to-member.body
+ * settings.message.admin-payment-from-system-to-member.subject
+ * settings.message.admin-payment-from-system-to-system.body
+ * settings.message.admin-payment-from-system-to-system.subject
+ * settings.message.admin-pending-buyer-only-guarantee.body
+ * settings.message.admin-pending-buyer-only-guarantee.subject
+ * settings.message.admin-pending-guarantee.body
+ * settings.message.admin-pending-guarantee.subject
+ * settings.message.broker-removed-remark-comments
+ * settings.message.brokering-expiration.sms
+ * settings.message.brokering-removed.sms
+ * settings.message.buyer-only-guarantee-status-changed.body
+ * settings.message.buyer-only-guarantee-status-changed.sms
+ * settings.message.buyer-only-guarantee-status-changed.subject
+ * settings.message.certification-issued.sms
+ * settings.message.certification-status-changed.sms
+ * settings.message.commission-contract-accepted.sms
+ * settings.message.commission-contract-cancelled.sms
+ * settings.message.commission-contract-denied.sms
+ * settings.message.expired-certification.sms
+ * settings.message.expired-guarantee.body
+ * settings.message.expired-guarantee.sms
+ * settings.message.expired-guarantee.subject
+ * settings.message.external-channel-payment-performed.body
+ * settings.message.external-channel-payment-performed.sms
+ * settings.message.external-channel-payment-performed.subject
+ * settings.message.external-channel-payment-request-expired-payer.body
+ * settings.message.external-channel-payment-request-expired-payer.sms
+ * settings.message.external-channel-payment-request-expired-payer.subject
+ * settings.message.external-channel-payment-request-expired-receiver.body
+ * settings.message.external-channel-payment-request-expired-receiver.sms
+ * settings.message.external-channel-payment-request-expired-receiver.subject
+ * settings.message.guarantee-status-changed.body
+ * settings.message.guarantee-status-changed.sms
+ * settings.message.guarantee-status-changed.subject
+ * settings.message.message-mail-subject-prefix
+ * settings.message.message-mail-suffix-html
+ * settings.message.message-mail-suffix-plain
+ * settings.message.new-commission-contract.sms
+ * settings.message.payment-obligation-registered.body
+ * settings.message.payment-obligation-registered.sms
+ * settings.message.payment-obligation-registered.subject
+ * settings.message.payment-obligation-rejected.body
+ * settings.message.payment-obligation-rejected.sms
+ * settings.message.payment-obligation-rejected.subject
+ * settings.message.pending-buyer-only-guarantee-issuer.body
+ * settings.message.pending-buyer-only-guarantee-issuer.sms
+ * settings.message.pending-buyer-only-guarantee-issuer.subject
+ * settings.message.pending-guarantee-issuer.body
+ * settings.message.pending-guarantee-issuer.sms
+ * settings.message.pending-guarantee-issuer.subject
+ * settings.message.reference-received.sms
+ * settings.message.removed-from-broker-group.sms
+ * settings.message.scheduled-payment-failed-to-payee.body
+ * settings.message.scheduled-payment-failed-to-payee.sms
+ * settings.message.scheduled-payment-failed-to-payee.subject
+ * settings.message.scheduled-payment-failed-to-payer.body
+ * settings.message.scheduled-payment-failed-to-payer.sms
+ * settings.message.scheduled-payment-failed-to-payer.subject
+ * settings.message.sms-message-prefix
+ * settings.message.transaction-feedback-admin-comments.sms
+ * settings.message.transaction-feedback-received.sms
+ * settings.message.transaction-feedback-reply.sms
+ * settings.message.transaction-feedback-request.sms
+
+Removed setup translation keys
+ * settings.message.admin-payment-member-to-system.body
+ * settings.message.admin-payment-member-to-system.subject
+ * settings.message.admin-payment-system-to-member.body
+ * settings.message.admin-payment-system-to-member.subject
+ * settings.message.admin-payment-system-to-system.body
+ * settings.message.admin-payment-system-to-system.subject
+ * settings.message.broker-removed-remark
+ * settings.message.buyer_only_guarantee_status_changed.body
+ * settings.message.buyer_only_guarantee_status_changed.subject
+ * settings.message.expired_guarantee.body
+ * settings.message.expired_guarantee.subject
+ * settings.message.external_channel_payment_performed.body
+ * settings.message.external_channel_payment_performed.sms
+ * settings.message.external_channel_payment_performed.subject
+ * settings.message.external_channel_payment_request_expired_payer.body
+ * settings.message.external_channel_payment_request_expired_payer.sms
+ * settings.message.external_channel_payment_request_expired_payer.subject
+ * settings.message.external_channel_payment_request_expired_receiver.body
+ * settings.message.external_channel_payment_request_expired_receiver.sms
+ * settings.message.external_channel_payment_request_expired_receiver.subject
+ * settings.message.guarantee_status_changed.body
+ * settings.message.guarantee_status_changed.subject
+ * settings.message.mail-body.suffix.html
+ * settings.message.mail-body.suffix.plain
+ * settings.message.mail-subject.prefix
+ * settings.message.payment_obligation_registered.body
+ * settings.message.payment_obligation_registered.subject
+ * settings.message.payment_obligation_rejected.body
+ * settings.message.payment_obligation_rejected.subject
+ * settings.message.pending_buyer_only_guarantee_admin.body
+ * settings.message.pending_buyer_only_guarantee_admin.subject
+ * settings.message.pending_buyer_only_guarantee_issuer.body
+ * settings.message.pending_buyer_only_guarantee_issuer.subject
+ * settings.message.pending_guarantee_admin.body
+ * settings.message.pending_guarantee_admin.subject
+ * settings.message.pending_guarantee_issuer.body
+ * settings.message.pending_guarantee_issuer.subject
+ * settings.message.scheduled-payment-failed-payee.body
+ * settings.message.scheduled-payment-failed-payee.sms
+ * settings.message.scheduled-payment-failed-payee.subject
+ * settings.message.scheduled-payment-failed-payer.body
+ * settings.message.scheduled-payment-failed-payer.sms
+ * settings.message.scheduled-payment-failed-payer.subject
+ * settings.message.sms-message.prefix
+
+---------------------------------------------------------------------------
+
+Version 3.6_beta3
+-----------------
+
+New / modified functions
+ * Added the transaction number in transactions export
+ * Now there is an enforcement that an user cannot have 2 equal passwords (for example, pin can't be equals to login password)
+ * Trace logs to the web services access, invoked operations and generated errors were added
+ * In the searchTransferTypes operation (account web service) if the fromMember and toMember are not set (and the client is restricted to member) then the toMember is taken from the restricted member
+ * The members transactions reports speed have been greatly improved. The invoices options were removed, as they were misleading within the report.
+ * New operation in the Payment Web Service to reverse a transfer
+ * Now a pending transfer can be charged back / reversed by receiver (if he/she has the charge back permission for the transfer type)
+ * On the member import, added the option to send the activation e-mail for imported members. Previoulsy, it was never sent
+
+Bug fixes
+ * It was possible that, on advertisements results, HTML entities, like &nbsp; were partially truncated, showing a part of it on the list
+ * Newly created currencies couldn't be removed
+ * Search indexes, when being rebuilt, could keep records which no longer exists
+ * Having multiple rich text editors in the same page (example: several custom fields with rich text editor) made them being shown with distinc sizes
+ * If sms messages are disabled in group, but an user had preferences to receive them, he would still keep receiving those
+ * For scheduled payments generated by invoices, the user which receives the payment could see the pay now button. He wouldn't be able to perform the payment anyway, but the button was being displayed
+ * Administrator viewing messages sent to the administration were seeing, on the inbox, the application username as from, and not the member who sent the message
+ * It was not possible to manually process an scheduled payment with a single installment
+ * Fixed an internal error when creating a broker commission
+ * The searchTransferTypes operation (account web service) didn't take into account the payer's permissions
+ * On flat member records, if the broker / admin didn't have the permission to create records, the form was visible. There was a permission error on submit, anyway
+ * A broker was not being able to view member records from his users even with permissions
+ * Immediately after creating a new group cloning another one, no custom fields were available, until the next application restart or after saving a custom field, which would reload the cached data
+ * On members lists / reports, the groups list could be unsorted or have duplicate groups
+
+New application translation keys
+ * transfer.fromOrTo
+ * memberImport.sendActivationMail
+ * group.settings.pinBlockTimeAfterMaxTries.number
+ * group.settings.pinBlockTimeAfterMaxTries.field
+
+Removed application translation keys
+ * transfer.relatedName
+ * guarantee.enabledGuaranteeType
+
+---------------------------------------------------------------------------
+
+Version 3.6_beta2
+-----------------
+
+New / modified functions
+ * Right aligned amounts in account history
+ * The export account history no longer has a from, to and always positive amount. Instead, it's displayed as the page: a related account / user and the amount may be either positive or negative
+
+Bug fixes
+ * It was not possible to permanently remove a member
+ * The AccountFeeLog-Invoice relationship was fixed (it was pointing to a Transfer entity)
+ * Account fees which charge over volumes shouldn't allow manual run mode
+ * Balance account fees were not being charged correctly
+ * When logging in through externalLogin, and there were a registration agreement which should be accepted, the page to accept it was not being displayed
+ * Sometimes, disabled administrators were being notified about events he choose to monitor while active
+ * Many alerts were not being notified by e-mail to registered admins
+
+---------------------------------------------------------------------------
+
+Version 3.6_beta1
+-----------------
+
+New / modified functions
+ * Refactored the full-text indexing, which is now much faster and less intrusive, creating the index on background. Also, Lucene has been updated to 2.9.0
+ * Now channels support specifying how to identify users (login / card) and how to authenticate them (which password / card security code)
+ * Added an option to group account setting which may hide accounts from users when credit limit is zero, making it easier to have credit accounts
+ * Added the possibility to customize the date separator in local settings
+ * It's now possible to filter transfers awaiting authorization using the transaction number
+ * Added the option to force change password on first login on administrators registration also
+ * Improved scheduled payments configuration in transfer type
+ * Made it possible to receive scheduled payments in posweb
+ * Improved the captcha image (on public registration)
+
+Bug fixes
+ * When a member group had a permission removed, but had already granted it to his operators, if the admin remove the member group permission the operators still had that permission
+ * The password policy is not applied when creating an administrator
+ * When removing an accessible channel from a group, remove it from members too
+ * When editing a loan group and clicking to add a member and the member was empty, there was an invalid form submission error instead of a validation error
+ * Improved the validation for amounts and dates in loans with multiple installments
+ * Ensured that for access WebService's searchTransferTypes() method only usable transfer types are returned
+ * When the 'payment every' field is invalid in a payment, the error is shown but the payment is performed without installments
+ * Custom field values were not being displayed in posweb payment confirmation
+ * The main web channel shoudln't be shown as option in group details for accessible / default channels, as access to it rely on permission to login
+ * Some improvements in the loan / loan payment searches
+ * The user reports for transactions was displaying wrong data when there were chargebacks (both summary and details)
+ * The print dynamic document feature was not working well in Chrome browser
+ * Sometimes, after importing members or ads, the results wouldn't be available on keywords searches until the next application restart
+
+New CSS classes
+ * .alertNotification
+
+---------------------------------------------------------------------------
+
+Version 3.5.6
+-------------
+
+Bug fixes
+ * E-mails with a single character before @ were being handled as invalid
+ * In some rare cases, combined with payments in past, the account balance could show up the wrong value
+ * There was an application error when navigating to another result page in search Loan Payments
+ * The export / import translation messages was redirecting to the wrong path
+ * Fixed some cases where reloading the page caused the member autocomplete to misbehave
+ * The authorized payments had a bug which prevented the same user to perform such a payment a second time
+ * Advertisements with description in rich text format didn't recognize accented characters for keywords search. The fix is only for ads saved from now on, or to all, if a full reindexing is done (removing WEB-INF/indexes directory)
+ * When exporting transactions to CSV, the date shown was always the submission date. In cases like payment in past, this was showing the wrong date
+
+---------------------------------------------------------------------------
+
+Version 3.5.5
+-------------
+
+Bug fixes
+ * The PIN blocked notification was always in english
+ * After confirming an scheduled payent as admin or operator, there was an invalid form submission, but the payment was performed anyway
+ * After confirming a scheduled payment as member members, the user was being redirected to the search scheduled payments page, not that specific payment details
+ * Only the first page was printed when select print all the manual
+ * On the edit group permissions, it could happen that, when changing visible system accounts / groups, the payment types options were missing a few items
+ * Fixed several problems with formatting / parsing dates when a timezone is set in local settings
+ * The scheduled payment search and details was not showing the currency pattern in amounts
+ * Negative balance account fees were never being charged
+ * Importing members when there was an unique custom field was always resulting in error
+
+---------------------------------------------------------------------------
+
+Version 3.5.4
+-------------
+
+New / modified functions
+ * Added support for french, japanese and simplified chinese languages
+
+Bug fixes
+ * When a volume account fee was active, there was an error while viewing a member's account history
+ * Updating the e-mail for pending members was failing, saying the e-mail was not unique
+ * Chargebacks were not retaining the same custom field values as original payments
+ * The webshop payments were considering the access setting for login password virtual keyboard on transaction passwords
+ * Now the account status is updated in the background, which improves both performance and reliability
+ * Fixed a problem handling dates when time zone is enabled in local settings
+ * In the edit ad page, root categories which have no child categories are show before others. Before, they were blending with other parent categories
+ * When searching member records wasn't displaying pagination tag
+ * When changing the category of an advertisement, the old / new category counters were not instantly updated
+ * Ads set as plain text were not being HTML escaped in search results, making it possible to use unwanted images or break layout
+ * Export to csv empty result when filtering by keyword
+ * Disable periods instead of hiding in edit ad to avoid problems with image options
+ * When clicking on back button on payment confirmation, it should clean payment form fields
+ * Validate ad image name - name too long causes application error
+ * Member lists report without h-scrollbar
+ * It was possible to remove an account from a group when members had non-zero balance
+ * When a member had credit limit and was changed to a disabled group, the limit was lost
+ * When a lot of data was being sent to client in Ajax requests, there was a server error
+ * Charging back a payment could make the receiving account go negative
+ * The permissions to authorized a payment as receiver was not being checked (a member which was a payment receiver for an authorized payment in receiver level could always authorize, no matter the permission)
+ * The max advertisement description size for HTML contents was counting markup also. Now, only text is counted.
+ * The initial balance on print account history (when a period is specified) was not considering the typed date, but the next day
+
+---------------------------------------------------------------------------
+
+Version 3.5.3
+-------------
+
+New / modified functions
+ * Now the rich text editor is preloaded in pages where the form is initially disabled. So, when the user clicks the Change button, the editor will be already loaded, or at least already loading
+ * Now a query string could be passed to the mobile login page to specify a group/group filter allowing to load his customized files
+ * Now pending members emails must be unique, which helps preventing people from registering multiple times
+ * The style classes .adTitle, .adDescription, .adOwner were replaced by .productTitle, .productDescription, .productOwner, as they were being removed by the AdBlock FireFox extension. Customized CSS files are automatically updated for the new classes
+ * Now the print members page hides custom fields without value, making it take less space for printing
+ * Now the export members to CSV includes the broker name also (previously it was only the broker login)
+ * Implemented both search and export to csv function for pending members
+ * Now in account history, payments and their generated transfers appear in the expected order. Previously, generated transfers were appearing before the original transfer
+ * The webshop payment cancellation confirmation has been removed, as it was confusing to have ok/cancel for a cancellation
+ * Now the print pages do not set the focus on the print button, which might cause a confusing scroll on some pages
+
+Bug fixes
+ * When inserting a new advertisement, the description format was always plain text, despite the settings
+ * Under some circumstances, a theme should be applied twice to have effect
+ * Member groups without accounts but in active groups were not having the activation date set
+ * Pending e-mail registrations were not being removed after the elapsed days in settings
+ * Now the edit profile pages shows rich text custom fields using the entire available width
+ * There was a javascript error in the edit group permissions which prevented payment types from being correctly updated
+ * When customize the login.css/style.css for a group/group filter these files were not loaded
+ * Customized application pages were always being marked as conflict and having the original contents stored as the current contents. As a result, if stop customizing, the file was not being returned to it's original state
+ * Fixed an error while generating an error log
+ * On print account history when there was an ending date, the final balance shown was not taking into account payments in the ending date, which could lead to incorrect data being shown. Using other filters could change the balance as well
+ * In the pending member profile, when clicking change then cancel, the resend e-mail button was being disabled too
+ * Pending payments to authorize were not being shown to members as payer, only as receiver
+ * When using a customized static file inside a customized login page for a specific group / group filter, and that static page was also customized for the group / group filter, the globally customized page was being shown
+ * File customization for group / group filter didn't work in Internet Explorer
+ * Operators that could see at least one of his member's accounts could actually see them all
+ * Password policy for a member group was not being enforced on his operators
+ * When printing or exporting to csv members or ads with a keywords search, there was an application error
+ * Disabled advertisement categories were still being shown in the category browser in the advertisements search
+ * Removing an advertisement interest would lead to a blank page
+ * The password was not mandatory when register a new user (by admin/broker) and the (generated) password was not sent by email
+ * Inactive members which had accepted a registration agreement couldn't be permanently removed
+ * Some account fees were being handled incorrectly
+ * The message for members receiving account fees was not being sent
+
+---------------------------------------------------------------------------
+
+Version 3.5.2
+-------------
+
+New / modified functions
+ * Added 2 more settings in member group: max pin wrong tries and deactivation time after pin tries
+ * Added another visibility type for member custom field in the editable by property: Member not at registration
+ * Now in account fees, the free base parameter is also used for fixed amount fees. In such cases, the fee is charged only when the balance is greater than the free base
+ * Now the account fee charge waits 10ms instead of 500ms after charging each member, making it faster while not so cpu intensive
+ * It's now possible to specify the creation date for imported members, which should be done in the column named creationdate
+ * The webshop payment page has been changed a bit to make it easier to fit in layout with the customized files (webshop_header.jps and webshop_footer.jsp)
+
+Bug fixes
+ * Setting the pin for a member which had none was not saving the new value
+ * Modifying an existing registration agreement was showing a normal, not a rich text editor for the contents
+ * The e-mail validation option in member groups was only being displayed when the group was set as initial group
+ * Admins / brokers without permission to manage pending member, when registering members with e-mail validation enabled would see the pending member profile with the change / submit buttons. Trying to save would result in permission error anyway, but the buttons are now hidden
+ * Disconnecting an user from the connected users list would disconnect all sessions for that user, not just the specified one
+ * An admin or broker registering a member, when setting to manually assign password, password was not being validated as required
+ * When performing a payment or sending an invoice, after selecting a member, when there are no possible payment types, there was a loop of the alert box saying there were no payment types
+ * Transfer types from systems were being created without the web channel enabled, rendering them unusable
+ * There was a bug in the URL validation, making it, for example, impossible to generate webshop tickets
+ * Hidden member custom field values were being indexed, and possibly allowing searching over those values
+ * Under some circumstances, importing advertisements was resulting in application exception
+ * There was a wrong translation key in the current state reports
+ * The upper credit limit, when used, was not being shown in the account history
+ * Webshop payments were allowed even when the client member was not related to the channel
+ * In webshop payments when fees are applied, they were not being shown
+ * There was no information whether the payment is awaiting authorization through TicketVO in web services. Now the 'awaitingAuthorization' flag was added
+ * When importing members, when there is not enough credits to create them, there was an application error. Now it shows the correct message
+ * Currency patterns were not being applied in the personal member reports page
+ * When a contact is being added and was already in the contact list, a new message is shown
+ * In the popup which displays thumbnails / images, when the displayed image was too small, window was being resized smaller than it should, and the thumbnails were not visible
+ * Using webshop payments with transaction password enabled was not validating the transaction password
+
+New application translation keys
+ * contact.error.alreadyExists
+ * customField.member.access.MEMBER_NOT_REGISTRATION
+ * group.settings.maxPinWrongTries
+ * group.settings.pinBlockTimeAfterMaxTries
+ * memberImport.status.INVALID_CREATION_DATE
+ * webshop.error.paymentDisabled
+
+Removed application translation keys
+ * mobile.transactionPassword.error.blocked
+ * mobile.transactionPassword.error.pending
+ * posweb.title.quickpayment.login
+ * reports.stats.activity.comparePeriods.loginTimes.row1.short
+ * reports.stats.activity.comparePeriods.percentageNoTrade.row1.short
+ * reports.stats.activity.singlePeriod.loginTimes.row1.short
+ * webshop.title.confirm
+ * webshop.title.confirmation
+ * webshop.title.payment
+
+---------------------------------------------------------------------------
+
+Version 3.5.1
+-------------
+
+New / modified functions
+ * Added a property in the advertisement model retrieved via web services indicating whether the description is html or plain text
+ * Now in posweb, when a payment is performed, instead of showing a button above the form, the payment data is displayed with a print link and a close button. Only after closing a new payment can be performed. The old behavior was confusing for some people.
+ * In member notifications in, for example, payments and invoices from system, instead of seeing "from the administration (the administration)", now it is "from the administration (Cyclos)". Those variables are the system settings application name and application username
+
+Bug fixes
+ * When a text input format in local settings (such as ad description) and the default was plain text, another text area was being displayed
+ * When transaction password is not used, the manage external password page has javascript errors
+ * The container page was not being honored when validating a registration e-mail
+ * Layout on login page was left-aligned
+ * A last time commit broke both member and ad imports
+ * The password policy was not used for pin to enforce simple pins or prevent previous pins to be reused
+ * Having more than one custom field with rich text editor would make only a the first one to be displayed
+ * After the e-mail validation, when the initial group is inactive, a message was shown as if the member could login immediately, not the one he should wait for administration to activate him
+ * Under some circumstances, a member accepting a system invoice would result in application error
+ * In firefox, if there was a password remembered, the transaction password, when requested, defaulted to that remembered password
+ * Sending a message was always plain text, despite the settings
+
+New application translation keys
+ * changePin.error.tooSimple
+
+---------------------------------------------------------------------------
+
+Version 3.5
+-----------
+
+New / modified functions
+ * Enumerated custom fields which are required now have a "Please select..." label when the value is empty
+ * Added a new local setting for decimal numbers input method: right to left (the classical mode, only numbers are typed) or left to right (should type the whole numbers, the decimal separator and then decimal numbers)
+ * Now in the web service clients it's possible to set as client address an IP range in form A.B.C.D-E
+ * Now an operator group cannot have individual payment type permissions, as this could bypass system-wide payment types configurations. It also made the operator group permissions page simpler, as the member doesn't need to know which transfer types he should grant to operators
+ * Added support to use a loan payment type (only if single payment) as initial credit
+ * In the public user registration, when registration agreement is used, instead of a large button with the "I agree..." message, there's a checkbox with that message and a regular submit button
+ * The posweb url is now more meaninful: root/posweb (member, both make and receive payments), /root/posweb/pay (member, make payment), /root/posweb/receive (member, receive payment) and /posweb/operator (operator, using permissions to check make and receive payments)
+ * Now the static file login.jsp is simpler, and doesn't have the form code inside, which was refactored to an included jsp. This also avoids messing up with the form when customizing the file, which could lead to not being able to login anymore
+ * Implemented temporary pin block on max invalid tries, as well as admin / broker / member permissions to immediately unblock it
+ * Added support for TLS security for sending e-mails. There's an option under mail settings
+ * The PaymentWebService and TicketWebService were handling currencies in different ways. Now the currency parameter is always a string, which may be either the symbol or the identifier
+ * It's now possible to determine whether members or ads custom fields are indexed for member and / or ad keywords searches
+ * It's now possible to set an enumerated custom field's possible value as default for new values
+ * The WS clients are improved, allowing to set a fixed channel and payment types for do payment and receive payment
+ * The advertisement interest notifications on new ads are much faster now
+ * Now images of members and advertisements handle browser's cache request, avoiding unnecessary downloads
+ * In autocomplete fields for login name, when generated, there's an appropriate numeric mask now
+ * Now there is a currency column in the account types list, and in account overview, the balances are shown with the respective currency symbol
+ * There is a new static file: posweb_login.jsp
+ * The PosWeb static files (posweb_header.jsp and posweb_footer.jsp) are no longer centered in a small table, allowing full control of the layout
+ * It is now possible to set a visibility level on advertisement custom fields: admin / broker / member
+ * Allowed the 'hide' column in member registration, allowing to hide e-mail and custom fields since registration
+ * The e-mail validation setting in member group can now be set to specific registration types: none / public / broker / admin
+ * The new pending member alert was removed, as it's now possible for admins to choose which groups they want to be notified when new members are created
+ * When a password policy is used for an user group, then previously used passwords cannot be used again. When no policy is used, then they can be used again
+ * Added another access settings: posweb session timeout
+
+Bug fixes
+ * The member search by custom field was broken in 3.5_RC2
+ * The external accounts overview was giving error in HSQLDB (i.e. standalone server)
+ * When performing payments with custom fields, the focus was jumping to the first custom field, instead of staying on the amount
+ * When saving a payment or member record custom field, the next page displayed was the transfer type or record type, not the field itself
+ * It was possible to select a currency while sending invoice from member to member where there were transfer types for the payment, but the invoice destination member had no permission to perform them
+ * URL custom fields which were not editable were generating an invalid page
+ * The transaction password for accepting invoices were being requested when it shoudln't
+ * When a payment would generate fees from other accounts in other currencies, in the fees preview, amounts were shown as if they were of the same currency as the original payment
+ * The loading message displayed when the user types in the system url is now displayed more to the top, making it friendlier in cases where cyclos is used inside another web site
+ * When a group didn't have the permission to see other members of that group, a member couldn't also modify his own profile
+ * When a member received invoices / payments from members he didn't have permission to see, there was an error
+ * When updating a custom field with child fields, some child field properties which should be the same as the parent's ones were not copied
+ * In the public member registration, custom fields dependent of a parent value didn't have it's values populated when changing the parent value
+ * In the make payment / send invoice pages, when a member was not selected and the currency was changed, there was an error message
+ * In posweb/quickpayment, when an operator was not generated his transaction password there was a NPE
+ * In posweb/quickpayment, only the group settings were considered to request the transaction password, now the group-account settings is taken into account too
+ * In posweb/quickpayment, if the operator/member submit the form withour any data there was a NPE
+ * Member custom fields with 'editable by' set to member registration were not having their values saved on the public registration
+ * The SERVER_ROOT/wap shortcut was redirecting to SERVER_ROOT/do/mobile/login, not SERVER_ROOT/do/wap/login
+ * There was a javascript error in the edit payment type page under Internet Explorer
+ * There was an error sending invoice via admin or broker as member to another member
+ * The value textarea for custom field possible values was too narrow
+ * Validation error on operator home when clicking on the 'Update profile' action
+ * In the account fee details, now the 'First charged period starts at' is only shown when the run mode is 'scheduled'. It is also positioned more logically
+ * Payment errors (such as not enough funds) in mobile access was displaying an internal error message instead of a regular error message
+ * In the advertisement edit, the rich text editor now uses all available space
+ * Some layout fixes for webkit (Chrome / Safari)
+ * Lifecycle initializations for guarantees, payment obligations and certifications were added
+ * The logged user information was improved: if it's a member then "username - name" is showed, if it's an operator then "memberusername / username - name" is showed
+ * Bulk change members to removed groups was not allowed, but removed groups were appearing in the select box
+ * Error accepting invoice in Internet Explorer
+ * The registration agreement was not being copied when inserting a new group based on an existing one
+ * On the login form, when clicking operator login, the member was not being validated as required
+ * A logged member in the mobile service, when disconnected, was seeing an error page, and the ok link lead back to the same error page, making it impossible to login again until the session expired
+ * The channel setting for wap 1 / 2 to use pin as password was not being used
+ * Mobile payment throws a NPE if the transaction password was not generated
+ * Change my PIN throws a NPE if the transaction password was not generated
+ * In 'My given references' when clicking a reference and then back, the displayed page was the other member's references, not mine
+ * The transaction password was not being requested on chargeback payment
+ * Custom field values for scheduled payments were not being copied to each installment
+ * Rich text editors in read-only mode were taking variable horizontal space. Now it's the same space as the editor
+ * When an admin / broker (with permissions) set a member pin which was already used in past, there was an application error
+ * An operator viewing member messages was actually viewing all system messages
+ * The pin entry was being handled as pure numbers, where 01 is the same as 1, making it impossible to start the pin with zeros
+ * Member custom fields marked as editable only by admin were being displayed in the registration by broker
+ * There was an application error when inserting a translation key which already existed
+ * Added a new method in AccountWebService: loadTransfer(memberId, transferId)
+ * Added new parameters in AccountWebService.search(): relatedMemberId and relatedMemberUsername
+ * The member group setting 'enable permanent advertisements' was not being used
+ * Some layout improvements on Internet Explorer
+ * The create administrator select box (group) was different than the member
+ * There were log errors under some circumstances for ImageByIdServlet
+ * Depending on the configuration, for multi-currency systems, it was possible that a payment member to member from profile would result in error for no transfer type
+ * Some fixes on background tasks, like ad interest notifications
+ * Member custom fields set editable on public registration were not appearing on registration by broker
+ * When the server date was set to a past date, there could be problems with account balances
+ * The sizes for ad and member image thumbnails were not being correctly reported to the browser when the disk cache was disabled
+ * There was an error if the channel's internal name was modified
+ * When saving an advertisement or member with an image of invalid format, the ad / member was being saved anyway
+ * The virtual keyboard was not being used when typing the transaction password on change pin
+ * Members or admins whose username were the same as an operator's username were unable to login
+ * Now general barcode readers are better supported, specially for account number fields (login name when it's a generated number)
+ * Custom fields marked as unique now allows repeating values which were previously used by removed members or ads
+ * Messages from broker to his registered members were being shown as from System, not the from the broker
+ * On the create group, the copy settings from couldn't be left empty
+ * Import / export settings was always using a hardcoded /cyclos/... path, which was broke on other urls
+ * In change pin, when transaction password is used but is blocked or haven't been generated, there is a friendly message now
+ * Custom field values for removed members were not being shown in profile
+ * Rich text fields in display only mode having wide contents could break the page layout
+ * Canceling an already finished execution of an account fee was resulting in application exception
+ * Uploading a new member or ad image was making the new image appear before existing images, after
+ * Error after removing a possible value in an enumerated payment custom field
+ * Broker commissions paid from system were not being paid
+
+New static files
+ * posweb_login.jsp
+
+New application translation keys
+ * accountFee.action.alreadyFinished
+ * alert.member.PIN_BLOCKED_BY_TRIES
+ * alert.member.pinBlockedByTries
+ * changePin.error.transactionPasswordBlocked
+ * changePin.error.transactionPasswordPending
+ * createMember.assignPassword
+ * createMember.error.mailSending
+ * createMember.error.registrationAgreementCheck
+ * createMember.forceChangePassword
+ * createMember.public.awaitingActivation
+ * createMember.public.awaitingPassword
+ * createMember.public.validated
+ * customField.ad.indexed
+ * customField.ad.visibility
+ * customField.ad.visibility.ADMIN
+ * customField.ad.visibility.BROKER
+ * customField.ad.visibility.MEMBER
+ * customField.member.indexing
+ * customField.member.indexing.MEMBERS_AND_ADS
+ * customField.member.indexing.MEMBERS_ONLY
+ * customField.member.indexing.NONE
+ * customField.possibleValue.default
+ * error.image
+ * group.registrationAgreement.explanation
+ * group.registrationAgreement.forceAccept
+ * group.registrationAgreement.none
+ * group.settings.emailValidation
+ * group.settings.emailValidation.ALL
+ * group.settings.emailValidation.NEVER
+ * group.settings.emailValidation.PUBLIC
+ * group.settings.emailValidation.PUBLIC_BROKER
+ * invoice.title.print
+ * login.operator.form.text
+ * mailPreferences.newMembers
+ * menu.admin.usersGroups.pendingMembers
+ * menu.admin.usersGroups.registrationAgreements
+ * menu.member.broker.pendingMembers
+ * mobile.login.pin
+ * mobile.transactionPassword.error.blocked
+ * mobile.transactionPassword.error.pending
+ * payment.chargeback.transactionPassword
+ * payment.recipient
+ * pendingMember.emailResent
+ * pendingMember.removeConfirmation
+ * pendingMember.removed
+ * pendingMember.resendEmail
+ * pendingMember.search.date
+ * pendingMember.title.profile
+ * pendingMember.title.search
+ * pendingMember.updated
+ * pendingMember.validationKey
+ * permission.adminMemberAccess.unblockPin
+ * permission.adminMembers.managePending
+ * permission.brokerMemberAccess.unblockPin
+ * permission.brokerMembers.managePending
+ * permission.memberAccess
+ * permission.memberAccess.unblockPin
+ * permission.systemRegistrationAgreements
+ * permission.systemRegistrationAgreements.manage
+ * permission.systemRegistrationAgreements.view
+ * pin.error.blocked
+ * pin.unblock.button
+ * pin.unblock.message
+ * pin.unblocked
+ * posweb.client.pin
+ * posweb.target.name
+ * posweb.target.username
+ * posweb.title.quickpayment.login
+ * registrationAgreement.contents
+ * registrationAgreement.error.removing
+ * registrationAgreement.inserted
+ * registrationAgreement.modified
+ * registrationAgreement.name
+ * registrationAgreement.new
+ * registrationAgreement.removeConfirmation
+ * registrationAgreement.removed
+ * registrationAgreement.title.accept
+ * registrationAgreement.title.insert
+ * registrationAgreement.title.list
+ * registrationAgreement.title.modify
+ * scheduledPayments.title.print
+ * scheduledPayments.totalAmount
+ * scheduledPayments.totalPaid
+ * scheduledPayments.totalRemaining
+ * serviceClient.channel
+ * serviceOperation.ACCESS
+ * serviceOperation.DO_PAYMENT
+ * serviceOperation.RECEIVE_PAYMENT
+ * settings.access.poswebTimeout
+ * settings.mail.activationMessageWithPassword
+ * settings.mail.activationMessageWithoutPassword
+ * settings.mail.smtp.useTLS
+ * settings.message.adminNewMember
+ * settings.message.pinBlocked
+
+Removed application translation keys
+ * alert.member.NEW_PENDING
+ * alert.member.newPending
+ * changePin.reset
+ * createMember.public.created
+ * createMember.public.validationKey
+ * group.settings.mailValidation
+ * serviceOperation.PAYMENTS
+ * settings.mail.blindCarbonCopy
+
+New setup translation keys
+ * group.inactive-members.description
+ * group.inactive-members.name
+ * settings.mail.activationWithPassword.message
+ * settings.mail.activationWithoutPassword.message
+ * settings.message.admin-new-member.body
+ * settings.message.admin-new-member.subject
+ * settings.message.pin-blocked.body
+ * settings.message.pin-blocked.sms
+ * settings.message.pin-blocked.subject
+
+Removed setup translation keys
+ * group.pending-members.description
+ * group.pending-members.name
+ * settings.mail.activation.account-details
+ * settings.mail.activation.message
+
+---------------------------------------------------------------------------
+
+Version 3.5_RC2
+---------------
+If you are migrating from previous versions, please, check http://project.cyclos.org/wiki/index.php?title=Migration_3.0_-_3.5
+
+New / modified functions
+ * It's now possible to assign custom fields to payments through payment types. This has replaced the loan custom fields, which are now custom fields in loan types
+ * The payment types which are to a member account now supports setting a fixed destination member: only payments to that member may use that payment type. Also useful in conjunction with the 'priority' setting for the payment type, making payments to special members to be of a specific type
+ * Improved default theme and new system logo
+ * Added the support to run Cyclos inside an iframe in another site
+ * Now it's possible to specify a customized class to validate a custom field value
+ * Now the 'member result display' setting is honored in the account history results
+ * The member autocomplete fields (normally a login name and full name) are improved
+ * The setting for virtual keyboard can now be set independently for login and transaction passwords
+ * Added the possibility to a transaction fee be charged from / paid to a fixed member, which is often needed in systems where partner organizations play an important role (for example, receiving fees)
+ * Now the e-mail notifications are queued in a separate thread, which makes general actions that perform notifications more responsive
+ * Added the doBulkPayment() to PaymentWebService
+ * Now a just registered pending by administrator guarantee can be removed from the system
+ * Now the generated loan is showed in the guarantee details
+ * On the initial database, now the loan repayment is a payment type from member account to debit account, no longer to community account
+ * Now the amount shown in the loan search (and loan payments) is formatted using the currency pattern
+ * Added a setting to show / hide the counters in advertisement categories, in ad search
+ * Now a custom field possible value (for enumerated fields) can be enabled / disabled
+ * Added the possibility to replace all occurrences of a given custom field possible value by another one
+ * Now, members can both perform and receive payments in the <server url>/quickpayment access
+
+Bug fixes
+ * Fixed a problem when read from Linux a windows-saved customized file (the Windows' carriage-return character causes the file to be considered different)
+ * When authorizing payments with transaction fees, the account statuses were not being updated for those fees, which led to incorrect balance and reserved amount being shown on accounts
+ * It was not possible to have only the permission to discard loans without the permission to repay
+ * When an user logged out, on the next login he would see the same page before logout, not the home page
+ * The conciliation status was being shown to member on transaction details
+ * When issuing guarantees which have loans which require authorization, fees were generated without the loan being totally accepted
+ * When viewing the account history with permission to view authorized payments, the canceled status was missing in the filter
+ * Fixed some wrong calculations with nested authorized fees, with multiple authorization levels
+ * It was possible to cancel generated transactions while awaiting authorization, which makes no sense. Only main transactions may be canceled
+ * When authorizing a payment with multiple authorization levels, the member was being notified that the payment was rejected when it was actually authorized to a next level. In this case, the member shouldn't be notified at all.
+ * Accessing a page when the session has expired redirects the user to the login page. However, when entering and invalid password, after a successful login, the previous page was no longer displayed, but the home instead
+ * The print transaction was not showing the currency in the amount field
+ * When logging in as member and then changing the url to the cyclos/mobile interface, there was an error. Now the user is logged out
+ * The view error log details page layout was broken due to large error details
+ * The currency pattern was not being shown in the transaction details
+ * When sending invoices from member to member through the menu, some unusual configuration could lead to not enabling a currency where it should be enabled
+ * The print receipt for posweb was yielding a permission error when the connected operator didn't have the permission to view account history as well
+ * Changing the order for custom fields in a member record type was returning to the wrong page
+ * The summary in the print loans and print loan payments was not taking into account the currency (the summary is showed only if a transfer type is selected)
+ * In the external payment processing, the date parameter was being ignored
+ * An admin without transaction password (when it's enabled) viewing a transaction would see the actions to authorize / deny (when still pending authorization), but would never be able to auth / deby since he had no transaction password
+ * Fixed some cases where a group couldn't be removed
+ * Creating a new permission group based on another one now also copies the relationship to group filters
+ * Stop customizing the last file in a group or group filter was resulting in application error
+ * After clicking Modify and then Cancel in customize new file for group or group filter, the contents was being cleaned
+ * Repeated field mappings for file imports in external account are no longer allowed
+ * When adding a member to a loan group, and that member already belonged to the group, there was an application error
+ * When a static file was customized for a group filter, customizing it globally could actually update the former, not the latter
+
+New application translation keys
+ * about.message
+ * about.version
+ * contactUs.message
+ * customField.error.invalidValidatorClass
+ * customField.moveValue
+ * customField.moveValue.confirmation
+ * customField.payment.access.BOTH_ACCOUNTS
+ * customField.payment.access.DESTINATION_MEMBER
+ * customField.payment.access.FROM_ACCOUNT
+ * customField.payment.access.NONE
+ * customField.payment.access.TO_ACCOUNT
+ * customField.payment.listAccess
+ * customField.payment.searchAccess
+ * customField.payment.type
+ * customField.payment.type.LINKED
+ * customField.payment.type.OWNED
+ * customField.possibleValue.enabled
+ * customField.title.insert.payment
+ * customField.title.modify.payment
+ * customField.title.order.payment
+ * customField.validation.validatorClass
+ * customField.valuesMoved
+ * global.search.all.male
+ * group.containerUrl
+ * groupFilter.containerUrl
+ * guarantee.action.delete
+ * guarantee.error.noIssuer
+ * guarantee.generatedLoan
+ * guarantee.loan
+ * guarantee.removeConfirmation
+ * guarantee.removed
+ * guarantee.status.WITHOUT_ACTION
+ * invoice.error.sendingWithMultipleTransferTypesWithCustomFields
+ * loan.queryStatus.ANY_CLOSED
+ * loan.queryStatus.ANY_OPEN
+ * loan.repayment.amountToRepaid
+ * loan.repayment.transactionPassword.canPerformExpiredAction
+ * loan.search.status
+ * loan.status.DISCARDED
+ * loan.status.EXPIRED
+ * loan.status.IN_PROCESS
+ * loan.status.RECOVERED
+ * loan.status.REPAID
+ * loan.status.UNRECOVERABLE
+ * loan.title.canPerformExpiredAction
+ * loanGroup.error.memberAlreadyInList
+ * loanPayment.summary.inProcessPayments
+ * loanPayment.summary.recoveredPayments
+ * loanPayment.summary.unrecoverablePayments
+ * login.bottomText
+ * login.form.text
+ * login.form.title
+ * login.registration.text
+ * login.registration.title
+ * payment.error.transferMinimum
+ * settings.access.virtualKeyboardLogin
+ * settings.access.virtualKeyboardTransactionPassword
+ * settings.local.containerUrl
+ * settings.local.showCountersInAdCategories
+ * top.message
+ * transactionFee.fromFixedMember.name
+ * transactionFee.fromFixedMember.username
+ * transactionFee.subject.FIXED_MEMBER
+ * transactionFee.toFixedMember.name
+ * transactionFee.toFixedMember.username
+ * transfer.relatedName
+ * transfer.schedulingDetails
+ * transferType.fields.action.link
+ * transferType.fields.action.new
+ * transferType.fields.title.list
+ * transferType.fixedDestinationMember.name
+ * transferType.fixedDestinationMember.username
+ * webshop.payment.descriptionText
+ * serviceOperation.DO_PAYMENT
+ * serviceOperation.RECEIVE_PAYMENT
+
+Removed application translation keys
+ * certification.qualification
+ * certification.qualification.GOOD
+ * certification.qualification.INSUFFICIENT
+ * certification.qualification.NOT_APPLICABLE
+ * certification.qualification.VERY_GOOD
+ * changeGroup.operator.changed=El
+ * customField.loan.showInSearch
+ * customField.title.order.loan
+ * guarantee.identifier
+ * guarantee.status.EXPIRED
+ * permission.adminMemberGuarantees.cancelPaymentObligationsAsMember
+ * permission.adminMemberGuarantees.processGuaranteeLoans
+ * permission.adminMemberGuarantees.requestGuarantees
+ * settings.access.virtualKeyboard
+ * serviceOperation.PAYMENT
+
+---------------------------------------------------------------------------
+
+Version 3.5_RC1a
+----------------
+
+New / modified functions
+ * Now, the src directory under the main distribution file contains all source artifacts, including xml and property files, including the CyclosSetup_??.properties translation files
+
+Bug fixes
+ * A build problem made the software unusable for browsers other than firefox
+ * The link on the mail for confirming the public registration was poiting to the server root url, not the validation url
+ * The login from external web sites was having a javscript problem when nested within multiple iframes
+
+---------------------------------------------------------------------------
+
+Version 3.5_RC1
+---------------
+
+New / modified functions
+ * Now, it is possible to add a form to login in cyclos on external web sites. For more details, http://project.cyclos.org/wiki/index.php?title=Login_from_web_sites
+ * Added the #link# variable to password reset and activation mails as well
+ * Now member record types accessible to brokers which are also checked as 'show in menu' are displayed on the menu for brokers (not only admins)
+ * When changing the application language on the local settings, mail and message translations are reloaded as well
+
+Bug fixes
+ * The WebShop WebService's get() method worked only once per session (thanks to barnaby)
+ * Fixed some special cases where unnecessary data was being generated on payments with volume account fees
+ * Now unquoted line breaks are correctly handled in CSV imports (thanks to Norbert Knapp)
+ * Under rare circumstances, an error was generated when changing a member's group
+ * Accessing the public member registration url when logged in was generating an error. Now it just redirects back to home
+ * Empty lines in external transactions imports were generating errors
+ * After logging out when the login page was customized, the login page displayed was the global page, not the one the user had seen on start
+ * On external accounts (bookkeeping), payment whose type's action is 'ignore' are processed when checked, and when manually editing them, the member is no longer required
+ * Fixed a bug related to the creation of user records whose type were not editable
+ * Users could view details of transactions of other users modifying the URL, that is not possible anymore
+ * Sorted helps alphabetically on the manual
+ * On external accounts, the transaction summary was not correct
+ * After processing payments on external account history, the select box for applying actions was not usable anymore
+
+---------------------------------------------------------------------------
+
+Version 3.5_beta4
+-----------------
+
+New / modified functions
+ * Upgraded to the latest versions of some used java libraries: Hibernate, Hibernate Search, Apache CXF and MySQL Connector/J
+ * Now the account fee charging uses less CPU, but takes longer to charge members. This, however, is useful to avoid the server to be over loaded
+ * Enumerated custom fields which are displayed as select boxes always have an empty option, to make the user to actually select something meaninful, even when it's required
+ * Now operators also see a both status and quick access windows in their home page
+ * Web service client address now resolves either ip or hostname
+ * Added another filter for system account history search: groups and group filters
+ * Now the account history export has a column for the payment type
+ * An user can no longer change password or pin to a password he had used in past, which is more secure
+ * Now on the external account file mapping, the negative amount field may be set to a text, not only a single character
+ * Now, when importing external transfers and the file had an ivalid value, a more detailed error message is shown
+
+Bug fixes
+ * Statistics on ads also counted deleted ads. Fixed.
+ * Fixed some memory leaks that made it practically impossible to charge an account fee when there are too much members
+ * Fixed some problems in broker commission contracts
+ * Unknown columns in import files for members / ads was giving an unknown error for each member
+ * A member record type could never be removed, even if there were no records
+ * Member record type fields were not using the broker access property, making brokers always being able to edit fields
+ * Under some circumstances, a permission denied was given to a broker trying to view the profile of a pending brokered member
+ * A broker could see payments to authorize that were not for himself on the 'to authorize' menu. However, there was an error when entering on the payment details
+ * When a system image was updated, it's cache were not, so when clicking the icon, the popup was always showing the first previewed version
+ * Member couldn't be permanently removed, even if they had no active accounts
+ * After invalid login attempt in quick payment or posweb, the user was redirected to the normal login page
+ * After saving a reference, the back button led to the logged user's references, not to the member receiving the reference
+ * Now, line breaks inside quotes are successfully imported
+ * An error was being generated when selecting to show either broker name or username on the member transaction report
+ * There was an error when a member was trying to remove a general reference he had given to someone else
+ * An admin viewing a member's references, when entering the details, the back button was going to the other member's profile
+ * Now both total and score are shown on a member's references. Also for given references.
+ * When using multiple currencies, the current state report was summing the value of loans and invoices from all currencies
+ * Error / blank page when removing system / member alerts
+ * Viewing a member's references from the last 30 days always was always showing 0 results
+ * A broker couldn't cancel invoices he had sent to his members
+ * Printing advertisements might yield an error when ads had multiple category levels
+ * When there are multiple currencies, the edit advertisement page always was always showing the first currency
+ * Error performing payments when there was a disabled volume account fee
+ * When editing an advertisement of a member whose external publication is hidden, the layout might broke when the ad had several images
+ * When saving an external account details, the existing file mapping was lost
+ * On the transaction details, after printing a transaction, the back button was resulting in error
+ * Fixed a layout issue on a payment details, where the parent payment had an extra and invalid column
+ * Under public registration and other circumstances, the notification e-mail for admins were not sent
+ * Now, e-mails are validated accepting all characters according to the RFC (http://en.wikipedia.org/wiki/E-mail_address)
+ * On activation e-mails, the #system_name# variable was not being replaced by the actual Application name setting
+
+---------------------------------------------------------------------------
+
+Version 3.5_beta3
+-----------------
+
+New / modified functions
+ * Added the member and advertisement import functions
+ * The default upload limit is now 5MB (previously, it was 80KB)
+ * The previous "Suspend commission" is now "Stop commission". It was created a new "Suspend commission" with other semantic.
+
+Bug fixes
+ * Changed the web services to only return enabled members
+ * Added a hack to make some pages work under Apache Tomcat 6.0.18, which has a bug (not present until 6.0.16)
+ * Fixed the external transfer import, which was broken
+
+---------------------------------------------------------------------------
+
+Version 3.5_beta2
+-----------------
+
+New / modified functions
+ * Now, by default, the transaction feed back is enabled on both trade transfer and mobile trade transfer in default database
+ * Now, by default, the rich text format is enabled (but there's the option to use plain text) on advertisements and messages
+ * Now, when Cyclos is running on HTTPS, web services requests to regular HTTP port are being denied
+ * Now the full-text index rebuilding, which is memory and time consuming has a setting for the time between runs, instead of running every day
+ * A link to generate a new captcha image on the public member registration was added
+ * Added a separated message type for notifying members about performed payments on external channels
+ * Made the web services more 'php-friendly'
+ * Now, a payment type which was previously authorized may be set as not authorized, as long as there are no pending payments
+ * It's now possible to deactivate a category with active advertisements. However, those advertisements won't be visible through categories
+ * Joined the authorized payments and account history, adding a select field for status in account history
+ * Joined the authorized loans and search loans, adding a select field for status in account history
+ * Improved the advertisement category registry, both using a more intuitive layout, and allowing registering several categories at once
+
+Bug fixes
+ * An administrator viewing a regular member profile had options that only should be displayed for brokers
+ * After errors on posweb access, an invalid page was shown
+ * Preserved the pin length when saving groups without channels that use pin
+ * Under some circumstances, an application error was being generated when logging a system to member payment
+ * On the send invoice from member to member as admin, when selecting a destination member, the back button was leading to that member, not the original one
+ * In order to keep consistency with other account configuration elements, when registering a new account fee, by default, it will be disabled
+ * Neither title nor help icon were being displayed on web services client list when the list was empty
+ * When uploading images that were extremely tall and thin, or wide and short, an application error was being generated
+ * When saving a loan transfer type, some relationships with loan repayment transfer types were silently generated, which could lead into problems when trying to remove those transfer types
+ * The member group settings to view / repay loans by other loan group members were being ignored
+ * It was possible for an administrator to set a broker as his own broker
+ * Under some circumstances, it was possible that two opened menu items were being shown at the same time
+ * When creating an authorization level for a system payment type, unlogical options were being shown
+ * Under some circumstances, inactive advertisement categories were being show on the new advertisement page
+ * The 'max images per member' group setting was being used for advertisement images also, instead of using the correct setting, 'max advertisement images per member'
+ * When there was an error while sending the registration validation e-mail, an ugly error stack trace was being displayed for the user
+ * After disconnecting an user through his profile, the page displayed was not the profile again
+ * On payment types registration, the availability select (with options disabled, payment to others and payment to self) was replaced by a clearer 'enabled' checkbox, on payments where only 2 of those options make sense (like member to system)
+ * Now, when inserting a payment type from a member account, the main web channel is pre-selected
+ * After wrong username / password login attempt as operator, when going back to login page, the login as operator will be enabled again
+ * Payments from member profile were not taking payment type's "allows scheduled payments" settings in account
+ * Payments from member profile with multiple currencies was only allowing one of them
+ * On payments from external channels, the receiving member was not being notified
+ * Fixed a problem in payment request from web to external channels
+ * Admins without permission to authorize a payment were still viewing the fields, even if a permission denied were raised later
+ * Removed the reset pin button on the external access page, since it can be confusing. The member can still disable channels he don't want
+ * Images were not being displayed on member search
+ * When viewing loans of a loan group, all loans were being show, not only those for that loan group
+
+---------------------------------------------------------------------------
+
+Version 3.5_beta1
+-----------------
+
+New / modified functions
+ * See the new features list in http://project.cyclos.org/index.php?option=com_content&task=view&id=228&Itemid=224
+
+New CSS classes
+ * div.fakeField
+ * div.fakeFieldDisabled
+ * ul.categoryLevel0
+ * ul.categoryLevel1
+ * ul.categoryLevel2
+ * li.categoryLevel1
+ * li.categoryLevel2
+ * li.categoryLevel3
+ * span.categoryLevel1Text
+ * span.categoryLevel2Text
+ * span.categoryLevel3Text
+ * span.categoryLevel1TextHover
+ * span.categoryLevel2TextHover
+ * span.categoryLevel3TextHover
+ * .tdPrintDataBold
+ * span.manualTitle
+ * div.manual h1
+ * div.manual h2
+ * div.manual h3
+
+---------------------------------------------------------------------------
+
+Version 3.0.12
+--------------
+
+Bug fixes
+ * Account fees charging negative balances were never being charged
+
+---------------------------------------------------------------------------
+
+Version 3.0.11
+--------------
+
+New / modified functions
+ * Improved outgoing e-mails, by adding a reply-to when the message was sent from other member and using names, not just raw e-mail addresses
+
+Bug fixes
+ * Admins with permission to view a member's profile but not modify were always seeing the member as logged in
+ * There were problems with masked custom fields with no separator between inputs, like AAA### (did not happen with AAA-###)
+
+---------------------------------------------------------------------------
+
+Version 3.0.10
+--------------
+
+New / modified functions
+ * Now other artifacts are placed together with the source files, such as translation files and hibernate mappings
+
+Bug fixes
+ * The maximum images per member setting was being used for advertisement images also, and not the correct 'max ad images per member'
+ * An admin could set a broker to be his own broker, making it impossible to assign him as broker of other members
+ * Now, e-mails are validated accepting all characters according to the RFC (http://en.wikipedia.org/wiki/E-mail_address)
+ * Fixed a problem when typing currency values with Opera
+
+---------------------------------------------------------------------------
+
+Version 3.0.9
+-------------
+
+New / modified functions
+ * The WebService for searching members now has additional options: withImagesOnly, randomOrder
+ * The WebService for searching advertisements now has additional option: memberId
+ * Added the Japanese translation (thanks to Masahiro Mikami)
+
+Bug fixes
+ * An application error was being generated from the mobile payment when the member had insufficient funds
+ * Member reports with a specified period were displaying members that were activated after that period
+
+---------------------------------------------------------------------------
+
+Version 3.0.8
+-------------
+
+Bug fixes
+ * On the administrator group permissions, system to system payments were being shown as available, even when not enabled
+ * Now the number of alerts displayed on the list is 200. For older alerts, the admin should use the alert history page
+ * The member filter on account history was not being used on Internet Explorer
+ * A member could see other member's profile without permissions through the advertisement link
+ * When associating an account type with a member group, no payment types for initial credit were shown, only when modifying those settings
+ * When a member custom field's name contained commas, only a comma would be displayed on the view profile page
+ * Invoices sent from system to member were not being alerted after the idle time specified on the alert settings
+ * The member reports as CSV had a wrong header
+ * The advertisement details page was not displaying the value of enumerated custom fields
+ * Advertisements not checked as external publication were being returned on searches through web services
+ * When customized the general_news.jsp page, a conflict alert was being generated on each server startup
+ * Now on the member transactions report, payment filters' columns that don't have incoming / outgoing transfer types are not shown
+ * Brokers viewing a pending member's profile was viewing buttons for actions like payments and invoices
+ * Now allows member searches by group and group filters on web services
+ * Now customized files and documents may contain larger contents
+
+---------------------------------------------------------------------------
+
+Version 3.0.7
+-------------
+
+New / modified functions
+ * Now it is possible to apply the free base over account fees over positive or negative balance
+ * Now the advertisement currency is shown on both print and export
+ * Now required custom fields not visible to member (only to admin) are not validated on the public registration or on the member profile, only when an admin is editing the profile
+ * Now mails are sent on a separate thread, which avoids a delay when multiple mails should be sent
+ * Now both member lists and transactions reports may include the member's broker
+ * Now the date pattern shown besides date input fields is internationalized through translation keys
+
+Bug fixes
+ * Now numbers can be typed with a maximum length only, avoiding application errors
+ * Removed an unused administrator permission with a missing resource bundle key
+ * Fixed rounding issues with transaction fees
+ * Fixed a missing message key on print advertisements
+ * The notification preferences were not being created for members registered via the public registration (thanks to Norbert Kapp)
+ * Better support for additional character encodings
+ * The custom fields were not editable by broker
+ * Asynchronous requests (like member autocomplete) were using incorrect character encoding, which made special characters to not be recognized
+ * When a member was sending an invoice or performing self payments, sometimes additional destination accounts were being shown
+ * When removing permanently a member or admin with related data, an application error was generated instead of showing a message
+ * When performing payments in past date, generated transfers had the current date, not the past date
+ * The invoice list page had no pagination
+ * Messages generated by paying an account fee with direction 'to member' didn't handle variables well
+ * Messages sent from admin to group were being typed as they were sent directly to the member
+ * On both edit group settings and permissions, when cancelling the edition, the button used to navigate to each other is no longer disabled
+ * Since loans are not allowed on initial credit, now the loan transfer types are not shown on the edit group account settings page
+
+New application translation keys
+ * global.datePattern.day
+ * global.datePattern.hour
+ * global.datePattern.minute
+ * global.datePattern.month
+ * global.datePattern.second
+ * global.datePattern.year
+
+---------------------------------------------------------------------------
+
+Version 3.0.6
+-------------
+
+New / modified functions
+ * Now the print transaction page shows the parent and child transactions
+ * Now there is a specific control to avoid double form submission
+
+Bug fixes
+ * Ad search was returning incorrect number of ads that expired today
+ * After reaching the max number of ads, and removing one, only after a logout or server restart a member could publish more ads
+ * Web services advertisements search was not enforcing status to active, which made scheduled or expired ads to show up
+ * Custom fields for members editable only at registration were loosing their values when registering members
+ * The default database were being created with member custom fields visible only by the field owner, not other members
+ * Ad creation date was being reset on ad update
+ * Account fees having a recurrence of more than 1 days, weeks or months were being charged every day, week or month
+ * The reports menus were being shown to administrators, no matter who had permissions
+
+New application translation keys
+ * permission.systemReports.memberList
+
+Removed application translation keys
+ * permission.systemReports.developments
+
+---------------------------------------------------------------------------
+
+Version 3.0.5
+-------------
+
+Bug fixes
+ * A last time bug prevented all custom values to be saved on public registration
+
+---------------------------------------------------------------------------
+
+Version 3.0.4
+-------------
+
+New / modified functions
+ * Added a new level to visibility access of a member custom field: other members, allowing a field to be visible by it's owner and not other members
+
+Bug fixes
+ * Only monthly account fees were being charged
+ * A member couldn't save his profile if a given custom field was not visible by him and it was required
+ * Removing an account fee that had already been charged resulted on an application error, not a message indicating it
+ * When uploading an invalid image, no more application error is generated, but a specific error message instead
+ * When saving a member group, he was removed from the list of account fees, which could lead to a group stop being charged
+ * After reenabling an administrator login, an application error was being generated
+ * When editing an admin group permissions, after adding or removing a member group from his management, the transfer types as member to system / member disappeared
+
+New application translation keys
+ * customField.member.access.OTHER
+
+---------------------------------------------------------------------------
+
+Version 3.0.3
+-------------
+
+New / modified functions
+ * Improved JavaScript performance, specially on Internet Explorer 6, making Cyclos a lot faster
+ * New icons, based on crystal svg
+ * Now members can add others to contacts directly on the his contact list
+ * Now the member search order is the same as the local settings' member result display (username or name), not only the username
+ * The member permissions to view messages are no longer related to categories. Categories are now related to sending message to the administration
+ * The advertisement web service now can query ads by publisher's group
+ * New advertisements for members with multiple currencies defaults to the default account's currency
+ * It's now possible to search advertisements by currency, when there are multiple options
+ * Now the system images are sorted according to the translation message
+ * Now, for sake of clarity, a broker viewing a member's invoice will only see the specific action buttons depending on incoming or outgoing invoice, not all
+ * Improved the search loan payments page, allowing filtering by multiple status
+ * Now on the print members page the broker is shown
+
+Bug fixes
+ * After validating fields, the focus was not being correctly set on the corresponding form control
+ * An application error was being generated when validating custom fields on the member profile
+ * The print loan payments operation was generating an error
+ * Expired loan payments couldn't be paid or discarded anymore
+ * Fixed some layout issues on the search messages page
+ * On the member group permissions, some unnecessary transaction types were being shown on the payment permission
+ * The 'published since' filter on advertisement search was not being applied
+ * When searching members by enumerated custom fields, when selecting more than one item there were no results
+ * When adding a new account to a member group, the form now comes initially writable
+ * When paying as member (by admin or broker), or sending an invoice, the member himself does not appear among the possible options
+ * The payment as member to member permission for administrator groups no longer includes payments for mobile or external
+ * The member export to csv now includes the e-mail
+ * The advertisement export to csv now includes the description
+ * Fixed the CSV export according to the standard format (see http://en.wikipedia.org/wiki/Comma-separated_values)
+ * When accepting invoices, the payment type list was being filled with payments the member didn't have permissions
+ * On the account history, amounts between 0 and 1 didn't show the signal
+ * Mails were sent without using the defined charset on local settings
+ * When creating an empty database, the cancelled invoice subject, under message settings, was not being read from the resource bundle
+ * When resetting and sending the password by mail, two confirmation dialogs were shown
+ * Now links to the application root are generated with a trailing forward slash, avoiding problems with apache httpd and mod_jk
+ * A member could not remove his ad's images
+ * On search and print loan payments, the discarded amount was wrong
+ * The print member list for brokers was showing only the members of the first page, not all
+ * The print members (both on member search and brokerings) were showing all custom fields enabled for print, not only those related to each member
+ * When confirming a payment with fees that deducts the total amount, the amount displayed on the pop-up was the original, not the deducted one
+ * When saving an adminstration group settings, the relationship with system account types were lost, causing some weird problems, like not being able to grant loans
+ * The header data on print account history was not taking in account all query parameters
+ * On firefox, the print page was always being print on a single page, despite the actual number of pages. That was a problem with the style sheet. You may need to re-apply the theme if there were no customizations to the style sheet (even the login) or re-merge the style.css
+ * A pending member couldn't be permanently removed
+ * The maximum ads per member group setting was not being used, allowing members to publish more ads
+ * After disconnecting a member, the filter for natures (admins, members, brokers) on the page was always reset to all
+
+New help files
+ * add_contact.jsp
+
+New application translation keys
+ * contact.title.add
+
+---------------------------------------------------------------------------
+
+Version 3.0.2
+-------------
+
+Bug fixes
+ * The removed group permissions were accidentally accessible via the group settings
+ * Only permanent ads were being returned when members were searching
+ * The whitelist settings for external search was not being applied for members search
+ * The administrator could remove a member - broker relationship
+ * When creating a transaction fee, system to member transfer types were not showing up
+
+---------------------------------------------------------------------------
+
+Version 3.0.1
+-------------
+
+Bug fixes
+ * Due to an error in the build process the English help files where accidentally substituted by the Portuguese translation
+ * When an admin sent a message to multiple groups, only the first one actually received the message
+ * When adding an account to an inactive group with members, the members received the account, but the activation date was kept null
+ * On the administration profile page, when he had already logged, the last login field was showing 'false'
+ * When a member has multiple accounts, on the account information page, after selecting an specific account, the back button sent the user to the profile page, instead of the account list page
+
+---------------------------------------------------------------------------
+
+Version 3.0
+-----------
+
+New / modified functions
+ * Minor layout improvements
+
+Bug fixes
+ * The default database was giving by default permissions to the System Administrator group that should be only manually, like making a payment with a specified date
+ * A member could not be changed to a removed group if he had transactions, even if his balance was zero
+ * The low credits message was not replacing the #creditLimit# variable
+ * The print brokered members was resulting in an application error
+ * The help page on the public member registration was being redirected to the login page
+ * After adding or removing a member from a loan group, the loan group was no longer editable
+ * The loan printing was sometimes giving an application error
+ * On Internet Explorer, the edit currency page had an error on clicking the Change button
+ * On a transaction details, a member was able to navigate through transactions not from or to his accounts when generated by transaction fees
+ * Generated payments for transaction fees were marked as performed by the member, what is not desireable for transaction fees of type destination
+
+New help files
+ * actions_for_admin_query.jsp
+ * customized_static_files- missing text.jsp
+ * reportsStatsKeydevelopmentsThroughTheYears.jsp
+ * reportsStatsKeydevelopmentsTransactionAmount.jsp
+
+Removed help files
+ * Copy of reportsStatsKeydevelopmentsGrossProduct.jsp
+ * actions_for_admin_query..jsp
+ * customized_static_files- missing text..jsp
+
+New application translation keys
+ * customImage.choose
+ * customImage.error.wrongType
+ * reports.stats.activity.comparePeriods.grossProduct.row2
+ * reports.stats.activity.comparePeriods.grossProduct.row2.short
+ * reports.stats.activity.comparePeriods.numberTransactions.row2
+ * reports.stats.activity.comparePeriods.numberTransactions.row2.short
+ * reports.stats.activity.throughTime.grossProduct.col2
+ * reports.stats.activity.throughTime.grossProduct.col3
+ * reports.stats.activity.throughTime.grossProduct.col4
+ * reports.stats.activity.throughTime.nAll
+ * reports.stats.activity.throughTime.nTraders
+ * reports.stats.activity.throughTime.numberTransactions.col2
+ * reports.stats.activity.throughTime.numberTransactions.col3
+ * reports.stats.activity.throughTime.numberTransactions.col4
+ * reports.stats.activity.whatToShow.COMPARE_PERIODS
+ * reports.stats.activity.whatToShow.DISTRIBUTION
+ * reports.stats.activity.whatToShow.THROUGH_TIME
+
+---------------------------------------------------------------------------
+
+Version 3.0_RC1
+---------------
+
+New / modified functions
+ * Consistent currency management
+ * Possibility for an administrator or broker to perform invoice actions as a given member
+ * Refactoring changing Float values to BigDecimal values. These changes aim to previne
+                loose of data caused by precision problems in calculations
+ * New error log page for administrators, allowing easy track of application errors
+ * Now account fees based on transactioned volume may have a tolerance period,
+                where balances kept for a time smaller than the tolerance period won't be charged
+ * Now the mobile service may be enabled per group
+ * Improved statistics section
+
+Bug fixes
+ * All known bugs were resolved
+
+New library dependencies
+ * c3p0-0.9.1.1.jar
+ * hibernate-3.2.3.jar
+ * mysql-connector-java-5.1.0-bin.jar
+ * oscache-2.4.jar
+ * spring_2.0.4.jar
+ * xfire-all-1.2.6.jar
+
+Removed library dependencies
+ * c3p0-0.9.0.jar
+ * ehcache-1.2.jar
+ * hibernate-3.2.2.jar
+ * mail.jar
+ * mysql-connector-java-3.1.12-bin.jar
+ * spring_2.0.3.jar
+ * xfire-all-1.2.4.jar
+
+New help files
+ * currency_list.jsp
+ * edit_currency.jsp
+ * error_log_details.jsp
+ * error_log_result.jsp
+ * error_log_result_history.jsp
+ * reportsStatsActivityToptenGrossProduct.jsp
+ * reportsStatsActivityToptenLogin.jsp
+ * reportsStatsActivityToptenNumberTransactions.jsp
+ * reportsStatsKeydevelopmentsAverageAmountPerTransaction.jsp
+ * reportsStatsKeydevelopmentsHighestAmountPerTransaction.jsp
+ * reportsStatsKeydevelopmentsThroughTimeMonths.jsp
+ * reportsStatsKeydevelopmentsThroughTimeQuarters.jsp
+ * reportsStatsKeydevelopmentsThroughTimeYears.jsp
+ * search_error_log.jsp
+ * statsThroughTime.jsp
+
+Removed help files
+ * reportsStatsKeydevelopmentsThroughTheYears.jsp
+ * reportsStatsKeydevelopmentsTransactionAmount.jsp
+
+New static files
+ * statistics_manual.jsp
+
+New application translation keys
+ * accountFee.tolerance
+ * accountHistory.finalBalance
+ * accountHistory.initialBalance
+ * accountType.currency
+ * adCategory.active
+ * adCategory.error.deactivating
+ * adCategory.error.removing
+ * currency.action.new
+ * currency.description
+ * currency.error.pattern
+ * currency.error.removing
+ * currency.inserted
+ * currency.modified
+ * currency.name
+ * currency.pattern
+ * currency.removeConfirmation
+ * currency.removed
+ * currency.symbol
+ * currency.title.insert
+ * currency.title.list
+ * currency.title.modify
+ * customField.member.access.REGISTRATION
+ * errorLog.date
+ * errorLog.loggedUser
+ * errorLog.loggedUser.none
+ * errorLog.parameters
+ * errorLog.path
+ * errorLog.removeOne.confirm
+ * errorLog.removeSelected.confirm
+ * errorLog.removed
+ * errorLog.search.date.begin
+ * errorLog.search.date.end
+ * errorLog.search.noResults
+ * errorLog.stackTrace
+ * errorLog.title.details
+ * errorLog.title.search
+ * errorLog.title.view
+ * global.month.APRIL
+ * global.month.AUGUST
+ * global.month.DECEMBER
+ * global.month.FEBRUARY
+ * global.month.JANUARY
+ * global.month.JULY
+ * global.month.JUNE
+ * global.month.MARCH
+ * global.month.MAY
+ * global.month.NOVEMBER
+ * global.month.OCTOBER
+ * global.month.SEPTEMBER
+ * global.quarter.FIRST
+ * global.quarter.FOURTH
+ * global.quarter.SECOND
+ * global.quarter.THIRD
+ * group.permissions
+ * group.settings
+ * home.admin.status.errors
+ * invoice.performedBy
+ * invoice.sentBy
+ * manual.title.stats
+ * menu.admin.accounts.currencies
+ * menu.admin.alerts.alertHistory
+ * menu.admin.alerts.errorLog
+ * menu.admin.alerts.errorLogHistory
+ * menu.admin.help.manual.stats
+ * messageCategory.noMessageCategories
+ * permission.adminMemberInvoices.acceptAsMemberFromMember
+ * permission.adminMemberInvoices.acceptAsMemberFromSystem
+ * permission.adminMemberInvoices.sendAsMemberToMember
+ * permission.adminMemberInvoices.sendAsMemberToSystem
+ * permission.brokerInvoices.acceptAsMemberFromMember
+ * permission.brokerInvoices.acceptAsMemberFromSystem
+ * permission.brokerInvoices.cancelAsMember
+ * permission.brokerInvoices.denyAsMember
+ * permission.brokerInvoices.sendAsMemberToMember
+ * permission.brokerInvoices.sendAsMemberToSystem
+ * permission.systemCurrencies
+ * permission.systemCurrencies.manage
+ * permission.systemCurrencies.view
+ * permission.systemErrorLog
+ * permission.systemErrorLog.manage
+ * permission.systemErrorLog.view
+ * profile.action.invoiceAsMemberToMember
+ * profile.action.invoiceAsMemberToSystem
+ * reports.members.date.current
+ * reports.members.date.empty
+ * reports.members.date.history
+ * reports.stats.activity.throughTime.grossProduct
+ * reports.stats.activity.throughTime.grossProduct.col1
+ * reports.stats.activity.throughTime.grossProduct.title
+ * reports.stats.activity.throughTime.grossProduct.yAxis
+ * reports.stats.activity.throughTime.loginTimes
+ * reports.stats.activity.throughTime.loginTimes.col1
+ * reports.stats.activity.throughTime.loginTimes.title
+ * reports.stats.activity.throughTime.loginTimes.yAxis
+ * reports.stats.activity.throughTime.numberTransactions
+ * reports.stats.activity.throughTime.numberTransactions.col1
+ * reports.stats.activity.throughTime.numberTransactions.title
+ * reports.stats.activity.throughTime.numberTransactions.yAxis
+ * reports.stats.activity.throughTime.percentageNoTrade
+ * reports.stats.activity.throughTime.percentageNoTrade.col1
+ * reports.stats.activity.throughTime.percentageNoTrade.title
+ * reports.stats.activity.throughTime.percentageNoTrade.yAxis
+ * reports.stats.activity.topten.grossProduct
+ * reports.stats.activity.topten.grossProduct.col1
+ * reports.stats.activity.topten.grossProduct.title
+ * reports.stats.activity.topten.login
+ * reports.stats.activity.topten.login.col1
+ * reports.stats.activity.topten.login.title
+ * reports.stats.activity.topten.member
+ * reports.stats.activity.topten.numberTransactions
+ * reports.stats.activity.topten.numberTransactions.col1
+ * reports.stats.activity.topten.numberTransactions.title
+ * reports.stats.comparedPeriods
+ * reports.stats.general.topten
+ * reports.stats.keydevelopments.error.finalDateLesserThanInitialDate
+ * reports.stats.keydevelopments.error.initialAndFinalYearsRequired
+ * reports.stats.keydevelopments.numberOfAds.created
+ * reports.stats.keydevelopments.numberOfAds.created.short
+ * reports.stats.keydevelopments.periodType.COMPARED_PERIODS
+ * reports.stats.keydevelopments.periodType.THROUGH_TIME
+ * reports.stats.keydevelopments.throughTime
+ * reports.stats.keydevelopments.throughTime.MONTH
+ * reports.stats.keydevelopments.throughTime.QUARTER
+ * reports.stats.keydevelopments.throughTime.YEAR
+ * reports.stats.keydevelopments.throughTime.alert
+ * reports.stats.keydevelopments.throughTime.months
+ * reports.stats.keydevelopments.throughTime.months.title
+ * reports.stats.keydevelopments.throughTime.months.xAxis
+ * reports.stats.keydevelopments.throughTime.quarters
+ * reports.stats.keydevelopments.throughTime.quarters.title
+ * reports.stats.keydevelopments.throughTime.quarters.xAxis
+ * reports.stats.keydevelopments.throughTime.selectMonths
+ * reports.stats.keydevelopments.throughTime.selectQuarters
+ * reports.stats.keydevelopments.throughTime.selectYears
+ * reports.stats.keydevelopments.throughTime.show
+ * reports.stats.keydevelopments.throughTime.throughTime
+ * reports.stats.keydevelopments.throughTime.title
+ * reports.stats.keydevelopments.throughTime.years
+ * reports.stats.keydevelopments.throughTime.years.title
+ * reports.stats.keydevelopments.throughTime.years.xAxis
+ * reports.stats.show
+ * reports.stats.throughTheTime
+ * settings.local.language.SPANISH_TIMEBANKS
+
+Removed application translation keys
+ * reports.error.reportRetrieveError
+
+---------------------------------------------------------------------------
+
+Version 3.0_B2
+--------------
+
+New / modified functions
+ * Messaging module, allowing members to send and receive
+                internal messages or e-mails
+ * Members can now hide their mail addresses from other
+                members, allowing them to receive messages from other
+                members only through the messaging module
+ * Ad interests module, allowing members to set interests
+                and be notified about new ads matching those interests
+ * Home page status window, showing open / new
+                notifications
+ * Customization of application pages, allowing customizing
+                any JSP file
+ * Customized files now have a built-in control for
+                conflicts generated by new versions
+
+Bug fixes
+ * All known bugs were resolved
+
+New library dependencies
+ * asm-2.2.2.jar
+ * asm-commons-2.2.2.jar
+ * asm-util-2.2.2.jar
+ * cglib-nodep-2.1_3.jar
+ * commons-io-1.3.1.jar
+ * hibernate-3.2.2.jar
+ * jcaptcha-all-1.0-RC4.jar
+ * spring_2.0.3.jar
+
+Removed library dependencies
+ * asm.jar
+ * cglib-2.1.3.jar
+ * commons-io-1.2.jar
+ * hibernate-3.2.jar
+ * jcaptcha-all-1.0-RC3.jar
+ * spring_2.0.jar
+
+New help files
+ * ad_interest_insert.jsp
+ * ad_interest_modify.jsp
+ * customize_application_pages.jsp
+ * customized_application_pages.jsp
+ * list_ad_interests.jsp
+ * manage_message_categories.jsp
+ * manage_notification_preferences.jsp
+ * member_status.jsp
+ * message_category_list.jsp
+ * search_messages_by_admin.jsp
+ * search_messages_by_member.jsp
+ * search_messages_result.jsp
+ * send_message_by_admin.jsp
+ * send_message_by_member.jsp
+ * view_message.jsp
+
+New application translation keys
+ * adCategory.children
+ * adCategory.inserted
+ * adCategory.modified
+ * adCategory.name
+ * adCategory.new
+ * adCategory.parent
+ * adCategory.removeConfirmation
+ * adCategory.removed
+ * adCategory.root
+ * adCategory.title.insert
+ * adCategory.title.list
+ * adCategory.title.modify
+ * adCategoryerrorRemoving
+ * adInterest.adFields
+ * adInterest.category
+ * adInterest.error.missingData
+ * adInterest.groupFilter
+ * adInterest.inserted
+ * adInterest.keywords
+ * adInterest.modified
+ * adInterest.new
+ * adInterest.priceRange
+ * adInterest.removeOne.confirm
+ * adInterest.removeSelected.confirm
+ * adInterest.removed
+ * adInterest.title
+ * adInterest.title.insert
+ * adInterest.title.list
+ * adInterest.title.modify
+ * adInterest.type
+ * adInterest.type.OFFER
+ * adInterest.type.SEARCH
+ * alert.system.newVersionOfApplicationPage
+ * alert.system.newVersionOfHelpFile
+ * alert.system.newVersionOfStaticFile
+ * brokering.status.ACTI0VE
+ * createMember.public.alreadyExists
+ * customImage.system.message_read.gif
+ * customImage.system.message_removed.gif
+ * customImage.system.message_replied.gif
+ * customImage.system.message_unread.gif
+ * customizedFile.newContents
+ * customizedFile.newContentsNotification
+ * customizedFile.originalContents
+ * customizedFile.path
+ * customizedFile.resolveConflict
+ * customizedFile.title.applicationPage
+ * customizedFile.title.customize.page
+ * customizedFile.title.search.page
+ * customizedFile.type.APPLICATION_PAGE
+ * global.choose
+ * global.hide
+ * global.show
+ * global.up
+ * home.admin.status.openInvoices
+ * home.admin.status.unreadMessages
+ * home.member.status.title
+ * home.status.newPayments
+ * home.status.newReferences
+ * home.status.openInvoices
+ * home.status.openLoans
+ * home.status.unreadMessages
+ * menu.admin.contentManagement.applicationPage
+ * menu.admin.messages
+ * menu.admin.messages.messageCategory
+ * menu.admin.messages.messages
+ * menu.member.personal.messages
+ * menu.member.preferences
+ * menu.member.preferences.adInterests
+ * menu.member.preferences.notification
+ * menu.member.preferences.notifications
+ * message.action.DELETE
+ * message.action.MARK_AS_READ
+ * message.action.MARK_AS_UNREAD
+ * message.action.MOVE_TO_TRASH
+ * message.action.RESTORE
+ * message.action.choose
+ * message.action.confirmDelete
+ * message.action.reply
+ * message.actionPerformed.DELETE
+ * message.actionPerformed.MOVE_TO_TRASH
+ * message.actionPerformed.RESTORE
+ * message.body
+ * message.category
+ * message.category.choose
+ * message.category.noCategory
+ * message.date
+ * message.error.emailNotSent
+ * message.error.memberCannotReceive
+ * message.error.memberWontReceiveNotification
+ * message.from
+ * message.fromTo
+ * message.html
+ * message.link.label
+ * message.messageBox
+ * message.messageBox.INBOX
+ * message.messageBox.SENT
+ * message.messageBox.TRASH
+ * message.reply.subject
+ * message.rootType
+ * message.rootType.ADMIN
+ * message.rootType.MEMBER
+ * message.rootType.SYSTEM
+ * message.rootType.all
+ * message.search.keywords
+ * message.search.noResults
+ * message.sendTo
+ * message.sendTo.ADMIN
+ * message.sendTo.GROUP
+ * message.sendTo.MEMBER
+ * message.sent
+ * message.subject
+ * message.system
+ * message.title.send
+ * message.title.view
+ * message.to
+ * message.toGroups
+ * message.toMember
+ * message.type
+ * message.type.ACCESS
+ * message.type.ACCOUNT
+ * message.type.AD_EXPIRATION
+ * message.type.AD_INTEREST
+ * message.type.BROKERING
+ * message.type.FROM_ADMIN_TO_GROUP
+ * message.type.FROM_ADMIN_TO_MEMBER
+ * message.type.FROM_MEMBER
+ * message.type.INVOICE
+ * message.type.LOAN
+ * message.type.PAYMENT
+ * message.type.REFERENCE
+ * message.warning.messageNotReceivedByEmail
+ * messageCategory.action.new
+ * messageCategory.all
+ * messageCategory.inserted
+ * messageCategory.modified
+ * messageCategory.name
+ * messageCategory.removeConfirmation
+ * messageCategory.removed
+ * messageCategory.title.insert
+ * messageCategory.title.list
+ * messageCategory.title.modify
+ * notificationPreferences.email
+ * notificationPreferences.hasntEmail
+ * notificationPreferences.message
+ * notificationPreferences.modified
+ * notificationPreferences.title.name
+ * permission.adminMemberInvoices.accept
+ * permission.adminMemberInvoices.acceptAsMember
+ * permission.adminMemberInvoices.cancelAsMember
+ * permission.adminMemberInvoices.deny
+ * permission.adminMemberInvoices.denyAsMember
+ * permission.adminMemberInvoices.sendAsMember
+ * permission.adminMemberMessages.manage
+ * permission.adminMemberMessages.view
+ * permission.memberAdInterests.manage
+ * permission.memberInvoices.acceptFromMember
+ * permission.memberInvoices.acceptFromSystem
+ * permission.memberMessages
+ * permission.memberMessages.manage
+ * permission.memberMessages.sendToAdministration
+ * permission.memberMessages.sendToMember
+ * permission.memberMessages.view
+ * permission.memberPreferences
+ * permission.memberPreferences.manageAdInterests
+ * permission.memberPreferences.manageNotifications
+ * permission.systemMessageCategories
+ * permission.systemMessageCategories.manage
+ * permission.systemMessageCategories.view
+ * profile.action.message
+ * reports.stats.keydevelopments.averageAmountPerTransaction
+ * reports.stats.keydevelopments.averageAmountPerTransaction.title
+ * reports.stats.keydevelopments.averageAmountPerTransaction.yAxis
+ * reports.stats.keydevelopments.highestAmountPerTransaction
+ * reports.stats.keydevelopments.highestAmountPerTransaction.title
+ * reports.stats.keydevelopments.highestAmountPerTransaction.yAxis
+ * settings.local.memberResultDisplay
+ * settings.mail.blindCarbonCopy
+ * settings.message.accountFeeReceivedMessage
+ * settings.message.adInterestMessage
+ * settings.message.body
+ * settings.message.brokerRemovedRemarkComments
+ * settings.message.loanGrantedMessage
+ * settings.message.lowUnitsMessage
+ * settings.message.paymentReceivedMessage
+ * settings.message.referenceReceivedMessage
+ * settings.message.remark
+ * settings.message.subject
+ * theme.error.notSelected
+ * theme.select.message
+ * transfer.relatedTransfers
+ * translationMessage.action.export
+ * translationMessage.action.new
+ * translationMessage.import.confirmation
+ * translationMessage.import.error.noFile
+ * translationMessage.import.error.reading
+ * translationMessage.import.file
+ * translationMessage.import.type
+ * translationMessage.import.type.NEW_AND_MODIFIED
+ * translationMessage.import.type.ONLY_NEW
+ * translationMessage.import.type.REPLACE
+ * translationMessage.imported
+ * translationMessage.inserted
+ * translationMessage.key
+ * translationMessage.message
+ * translationMessage.modified
+ * translationMessage.removeOne.confirm
+ * translationMessage.removeSelected.confirm
+ * translationMessage.removed
+ * translationMessage.search.showOnlyEmpty
+ * translationMessage.title.export
+ * translationMessage.title.import
+ * translationMessage.title.insert
+ * translationMessage.title.modify
+ * translationMessage.title.search
+
+Removed application translation keys
+ * category.children
+ * category.errorRemoving
+ * category.inserted
+ * category.modified
+ * category.name
+ * category.new
+ * category.parent
+ * category.removeConfirmation
+ * category.removed
+ * category.root
+ * category.title.insert
+ * category.title.list
+ * category.title.modify
+ * message.action.export
+ * message.import.confirmation
+ * message.import.error.noFile
+ * message.import.error.reading
+ * message.import.file
+ * message.import.type
+ * message.import.type.NEW_AND_MODIFIED
+ * message.import.type.ONLY_NEW
+ * message.import.type.REPLACE
+ * message.imported
+ * message.inserted
+ * message.key
+ * message.message
+ * message.modified
+ * message.removeOne.confirm
+ * message.removeSelected.confirm
+ * message.removed
+ * message.search.showOnlyEmpty
+ * message.title.export
+ * message.title.import
+ * message.title.insert
+ * message.title.modify
+ * personalMessage.date
+ * personalMessage.groups
+ * personalMessage.message
+ * personalMessage.removeSelectedConfirmation
+ * personalMessage.removeSingleConfirmation
+ * personalMessage.removed
+ * personalMessage.sent.group
+ * personalMessage.sent.member
+ * personalMessage.title.list
+ * personalMessage.title.send.group
+ * personalMessage.title.send.member
+ * settings.message.brokerRemovedMessage
+
+---------------------------------------------------------------------------
+
+Version 3.0_B1
+--------------
+Initial beta release
+
+

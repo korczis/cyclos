@@ -1,0 +1,15 @@
+Cyclos uses some icons from other projects:
+
+Quick access:
+------------
+Update profile > Aha-soft, free for non commercial use 
+Account(s) > The loop - The idea comes from this lopes it has some differences. Open icon libary, nuvola, LGPL 2.1
+Make payment > Aha-soft, CC Attribution 3.0 US 
+Place ad > YellowIcon, GNU/GPL 
+Search ads > YellowIcon, GNU/GPL 
+Contacts > Open icon libary, oxygen, CC-BY-SA 3.0 or LGPL 
+
+Other icons:
+-----------
+Some other icons from the Oxygen project (http://www.oxygen-icons.org) are used - CC-BY-SA 3.0 or LGPL
+Print and export as CSV http://www.famfamfam.com/lab/icons/silk/

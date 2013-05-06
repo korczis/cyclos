@@ -1,0 +1,214 @@
+<html xmlns:javaee="http://java.sun.com/xml/ns/javaee" xmlns:fo="http://www.w3.org/1999/XSL/Format">
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>cyclos
+          (Tag Library Documentation Generator - Generated Documentation)
+        </title>
+<link rel="stylesheet" type="text/css" href="../stylesheet.css" title="styie">
+</head>
+<script>
+            function asd()
+            {
+            parent.document.title="cyclos (Tag Library Documentation Generator - Generated Documentation)";
+            }
+          </script>
+<body bgcolor="white" onload="asd();">
+<a name="navbar_top"></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td COLSPAN="3" BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><a NAME="navbar_top_firstrow"></a>
+<table BORDER="0" CELLPADDING="0" CELLSPACING="3">
+<tr ALIGN="center" VALIGN="top">
+<td BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    &nbsp;<a href="../overview-summary.html"><font CLASS="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td><td BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev">    &nbsp;<font CLASS="NavBarFont1Rev">&nbsp;Library&nbsp;</font>&nbsp;</td><td BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><font CLASS="NavBarFont1">&nbsp;Tag&nbsp;</font></td><td BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    &nbsp;<a HREF="../help-doc.html"><font CLASS="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+</tr>
+</table>
+</td><td ALIGN="right" VALIGN="top" ROWSPAN="3"><em></em></td>
+</tr>
+<tr>
+<td BGCOLOR="white" CLASS="NavBarCell2"><font SIZE="-2"></font></td><td BGCOLOR="white" CLASS="NavBarCell2"><font SIZE="-2">
+                &nbsp;<a HREF="../index.html" TARGET="_top"><b>FRAMES</b></a>&nbsp;
+                &nbsp;<a HREF="tld-summary.html" TARGET="_top"><b>NO FRAMES</b></a>&nbsp;
+                <script></script>
+<noscript>
+<a HREF="../alltags-noframe.html" TARGET=""><b>All Tags</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<hr>
+<h2>cyclos</h2>
+<hr>
+<b>Standard Syntax:</b>
+<br>
+<code>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                
+                    &lt;%@ taglib prefix="cyclos" uri="http://devel.cyclos.org/tlibs/cyclos-core" %&gt;<br>
+</code>
+<br>
+<b>XML Syntax:</b>
+<br>
+<code>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                
+                    &lt;anyxmlelement xmlns:cyclos="http://devel.cyclos.org/tlibs/cyclos-core" /&gt;<br>
+</code>
+<hr>
+<pre>Cyclos Core Tag Library</pre>
+<p></p>
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+<td colspan="2"><font size="+2"><b>Tag Library Information</b></font></td>
+</tr>
+<tr>
+<td>Display Name</td><td><i>None</i></td>
+</tr>
+<tr>
+<td>Version</td><td>1.1</td>
+</tr>
+<tr>
+<td>Short Name</td><td>cyclos</td>
+</tr>
+<tr>
+<td>URI</td><td>http://devel.cyclos.org/tlibs/cyclos-core</td>
+</tr>
+</table>
+            &nbsp;
+            <p></p>
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+<td colspan="2"><font size="+2"><b>Tag Summary</b></font></td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="noCache.html">noCache</a></b></td><td>Sets the no-cache response headers.</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="escapeJS.html">escapeJS</a></b></td><td>Escapes a String to JavaScript, either writing it to the response or exporting it to a scoped variable. The string may be the value attribute or the tag body.</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="escapeHTML.html">escapeHTML</a></b></td><td>Escapes a String to HTML, either writing it to the response or exporting it to a scoped variable. The string may be the value attribute or the tag body.</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="customizedFilePath.html">customizedFilePath</a></b></td><td>Renders a customized file path, or exports it to the given variable, if the var attribute is specified. When a user is logged, first check if the given file is customized for his specific group. If not, use the main customized file. Alternatively, a group or group filter may be specified using the groupId or groupFilterId attributes.</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="includeCustomizedFile.html">includeCustomizedFile</a></b></td><td>Includes a customized file on the current response. When a user is logged, first check if the given file is customized for his specific group. If not, use the main customized file. Alternatively, a group or group filter may be specified using the groupId or groupFilterId attributes.</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="format.html">format</a></b></td><td>Formats a given data according to the application's settings. One of the following attributes should be set: number, amount, date, dateTime or bytes. When none of those attributes were set, or the specified one was null, the default attribute is used to determine the output.</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="customField.html">customField</a></b></td><td>Renders a custom field. This tag can be used just output a custom field value (when the textOnly attribute) is set to true or to render a HTML control for that field.</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="menu.html">menu</a></b></td><td>Renders a menu item. May be nested, however, currently, only 2 levels are supported.</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="profile.html">profile</a></b></td><td>Renders element information like name and username. If the logged user has the required permissions a link to the profile is shown.</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="help.html">help</a></b></td><td>Renders the help icon, inside or not a TD element</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="images.html">images</a></b></td><td>Renders an image index, allowing them to be edited</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="layout.html">layout</a></b></td><td>This tag generates a HTML table element with a fixed column count. As nested cell tags are used, they fill in those columns. When the column count reaches the table's column limit, a row break is generated. The row break may also be forces with a rowBreak tag. Arbitrary attributes may be passed to the table tag, with the following replacements: class should be specified as className, and id as elementId.</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="cell.html">cell</a></b></td><td>This tag generates a HTML cell inside a layout tag. Arbitrary attributes may be passed to the table tag, with the following replacements: class should be specified as className, and id as elementId.</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="rowBreak.html">rowBreak</a></b></td><td>Forces a row break inside a layout tag</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="multiDropDown.html">multiDropDown</a></b></td><td>Renders a multi drop down control. A multi drop down is a control generated via JavaScript that is like a HTML multiple select, but is expandable, having a checkbox on each option.</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="option.html">option</a></b></td><td>Renders a multi drop down option</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="pagination.html">pagination</a></b></td><td>Renders a pagination index for a search results. When the user clicks a page number, a HTML hidden is created on the first form, with the name 'query(pageParameters).currentPage'. This attribute matches the page parameters for actions extending nl.strohalm.cyclos.controls.BaseQueryAction. For an alternative form, the form attribute may be used, indicating the form name.</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="truncate.html">truncate</a></b></td><td>Truncates a string for a given number of lines, with a given max length each.</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="customImageUrl.html">customImageUrl</a></b></td><td>Renders the url for a given custom image</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="customImage.html">customImage</a></b></td><td>Renders an img tag for a given custom image. Arbitrary attributes may be passed to the img tag, with the following replacements: class should be specified as className, and id as elementId.</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="richTextArea.html">richTextArea</a></b></td><td>Renders a textarea with options to select if the content is plain text or rich text</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="selectCustomFields.html">selectCustomFields</a></b></td><td>Given a collection of custom fields, select those who matches specified conditions, storing the resulting collection on the page</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="script.html">script</a></b></td><td>Renders a script tag, appending the cyclos version as a parameter to avoid browser cache between versions</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%"><b><a href="clearCache.html">clearCache</a></b></td><td>Invokes the CacheCleaner.clearCache() method</td>
+</tr>
+</table>
+              &nbsp;
+              <p></p>
+<table border="1" cellpadding="3" cellspacing="0" width="100%">
+<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+<td colspan="3"><font size="+2"><b>Function Summary</b></font></td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%" nowrap align="right"><code>boolean</code></td><td width="15%" nowrap><code><b><a href="granted.fn.html">granted</a></b>( nl.strohalm.cyclos.access.Permission)</code></td><td>Returns if the logged user has granted the given permission</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%" nowrap align="right"><code>String</code></td><td width="15%" nowrap><code><b><a href="name.fn.html">name</a></b>( java.lang.Object)</code></td><td>Given an enumeration instance, returns it's name</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%" nowrap align="right"><code>Object</code></td><td width="15%" nowrap><code><b><a href="value.fn.html">value</a></b>( java.lang.Object)</code></td><td>Given an enumeration instance, returns it's value. The value is determined using the following heuristic: If the enum implements nl.strohalm.cyclos.utils.StringValuedEnum or nl.strohalm.cyclos.utils.IntValuedEnum the getValue() method is called, otherwise, the enum name is returned.</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%" nowrap align="right"><code>boolean</code></td><td width="15%" nowrap><code><b><a href="contains.fn.html">contains</a></b>( java.lang.Object, java.lang.Object)</code></td><td>Returns if a collection, array or map contains a given value (or key if a map)</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%" nowrap align="right"><code>java.math.BigDecimal</code></td><td width="15%" nowrap><code><b><a href="round.fn.html">round</a></b>( java.lang.Object)</code></td><td>Rounds a given number according to the local settings</td>
+</tr>
+<tr bgcolor="white" class="TableRowColor">
+<td width="15%" nowrap align="right"><code>boolean</code></td><td width="15%" nowrap><code><b><a href="equals.fn.html">equals</a></b>( java.lang.Object, java.lang.Object)</code></td><td>If both objects are non-null then check for equality (using the equals'' implementation of the first argument). if any of them is empty then return false.</td>
+</tr>
+</table>
+              &nbsp;
+              <p></p>
+<a name="navbar_bottom"></a>
+<table border="0" width="100%" cellpadding="1" cellspacing="0">
+<tr>
+<td COLSPAN="3" BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><a NAME="navbar_bottom_firstrow"></a>
+<table BORDER="0" CELLPADDING="0" CELLSPACING="3">
+<tr ALIGN="center" VALIGN="top">
+<td BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    &nbsp;<a href="../overview-summary.html"><font CLASS="NavBarFont1"><b>Overview</b></font></a>&nbsp;</td><td BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev">    &nbsp;<font CLASS="NavBarFont1Rev">&nbsp;Library&nbsp;</font>&nbsp;</td><td BGCOLOR="#EEEEFF" CLASS="NavBarCell1"><font CLASS="NavBarFont1">&nbsp;Tag&nbsp;</font></td><td BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    &nbsp;<a HREF="../help-doc.html"><font CLASS="NavBarFont1"><b>Help</b></font></a>&nbsp;</td>
+</tr>
+</table>
+</td><td ALIGN="right" VALIGN="top" ROWSPAN="3"><em></em></td>
+</tr>
+<tr>
+<td BGCOLOR="white" CLASS="NavBarCell2"><font SIZE="-2"></font></td><td BGCOLOR="white" CLASS="NavBarCell2"><font SIZE="-2">
+                &nbsp;<a HREF="../index.html" TARGET="_top"><b>FRAMES</b></a>&nbsp;
+                &nbsp;<a HREF="tld-summary.html" TARGET="_top"><b>NO FRAMES</b></a>&nbsp;
+                <script></script>
+<noscript>
+<a HREF="../alltags-noframe.html" TARGET=""><b>All Tags</b></a>
+</noscript>
+</font></td>
+</tr>
+</table>
+<hr>
+<small><i>
+            Java, JSP, and JavaServer Pages are trademarks or registered 
+            trademarks of Sun Microsystems, Inc. in the US and other countries.
+            Copyright 2002-3 Sun Microsystems, Inc.
+            4150 Network Circle
+            Santa Clara, CA 95054, U.S.A.
+            All Rights Reserved. 
+            </i></small>
+</body>
+</html>
