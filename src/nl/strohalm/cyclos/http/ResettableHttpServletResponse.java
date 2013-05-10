@@ -184,7 +184,22 @@ public class ResettableHttpServletResponse implements HttpServletResponse, Reset
     public String getContentType() {
         return contentType;
     }
+    
+    @Override
+    public java.lang.String getHeader(java.lang.String name) {
+        return null;
+    }
+    
+    @Override
+    public java.util.Collection<java.lang.String> getHeaders(java.lang.String name) {
+        return null;
+    }
 
+    @Override
+    public java.util.Collection<java.lang.String> getHeaderNames() {
+        return null;
+    }
+    
     @Override
     public Locale getLocale() {
         return locale;
@@ -228,7 +243,7 @@ public class ResettableHttpServletResponse implements HttpServletResponse, Reset
         return servletOutputStream;
     }
 
-    public Integer getStatus() {
+    public int getStatus() {
         return status;
     }
 

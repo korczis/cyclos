@@ -43,7 +43,7 @@ public class LoanCustomFieldMigration implements UntraceableMigration {
 
     public static void main(final String[] args) throws Exception {
         Class.forName("com.mysql.jdbc.Driver");
-        final Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/cyclos3_new", "root", "");
+        final Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/cyclos", "cyclos", "cyclos");
         try {
             conn.setAutoCommit(false);
             final JDBCWrapper jdbc = new JDBCWrapper(conn);

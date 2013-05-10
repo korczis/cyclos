@@ -77,7 +77,7 @@ public class ClosedAccountBalancesMigration implements TraceableMigration {
                 " where reserve_amount = true ");
         jdbc.execute("insert into amount_reservations" +
                 " (subclass, account_id, date, amount, transfer_id)" +
-                " select 'I', t.from_account_id, ifnull(t.process_date, t.date), -t.amount, t.id " +
+                " select 'I', t.from_account_id, nullif(t.process_date, t.date), -t.amount, t.id " +
                 " from transfers t inner join scheduled_payments sp on t.scheduled_payment_id = sp.id" +
                 " where sp.reserve_amount = true and t.status <> ? ", Payment.Status.SCHEDULED.getValue());
 

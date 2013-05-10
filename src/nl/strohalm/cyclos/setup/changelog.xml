@@ -2872,7 +2872,7 @@
             <item>alter table custom_field_values add index FK8AE18A152F78F3B3 (transfer_id), add constraint FK8AE18A152F78F3B3 foreign key (transfer_id) references transfers (id)</item>
             <item>alter table custom_field_values add index FK8AE18A15E9B959A1 (invoice_id), add constraint FK8AE18A15E9B959A1 foreign key (invoice_id) references invoices (id)</item>
             <item>alter table custom_field_values add index FK8AE18A1529C0E817 (guarantee_id), add constraint FK8AE18A1529C0E817 foreign key (guarantee_id) references guarantees (id)</item>
-            <item>create table transfer_types_linked_custom_fields (transfer_type_id integer not null, field_id integer not null) ENGINE=InnoDB</item>
+            <item>create table transfer_types_linked_custom_fields (transfer_type_id integer not null, field_id integer not null)</item>
             <item>alter table transfer_types_linked_custom_fields add index FKC990947BA4766B0A (transfer_type_id), add constraint FKC990947BA4766B0A foreign key (transfer_type_id) references transfer_types (id)</item>
             <item>alter table transfer_types_linked_custom_fields add index FKC990947B9C156375 (field_id), add constraint FKC990947B9C156375 foreign key (field_id) references custom_fields (id)</item>
             <item>alter table guarantees drop column identifier</item>
@@ -3678,7 +3678,7 @@
             <item>alter table groups_default_channels add index FK9B33E3199B71D578 (channel_id), add constraint FK9B33E3199B71D578 foreign key (channel_id) references channels (id)</item>
 
             <!-- 3.5_dev50 -->
-            <item>create table transfer_types_channels (transfer_type_id integer not null, channel_id integer not null) ENGINE=InnoDB</item>
+            <item>create table transfer_types_channels (transfer_type_id integer not null, channel_id integer not null)</item>
             <item>alter table transfer_types_channels add index FK6FBCF7AAA4766B0A (transfer_type_id), add constraint FK6FBCF7AAA4766B0A foreign key (transfer_type_id) references transfer_types (id)</item>
             <item>alter table transfer_types_channels add index FK6FBCF7AA9B71D578 (channel_id), add constraint FK6FBCF7AA9B71D578 foreign key (channel_id) references channels (id)</item>
 

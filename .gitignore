@@ -3,3 +3,6 @@
 # Package Files #
 *.war
 *.ear
+/nbproject/private/
+/build/
+/dist/

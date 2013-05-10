@@ -149,15 +149,26 @@ public class CreateInitialData implements Runnable {
         Setup.out.println(bundle.getString("initial-data.start"));
         session.clear();
 
+        Setup.out.println("Creating system admins");
         systemAdmins = (AdminGroup) session.createCriteria(AdminGroup.class).add(Restrictions.eq("name", bundle.getString("group.system-admins.name"))).uniqueResult();
+        
+        Setup.out.println("Creating account addmins");
         accountAdmins = (AdminGroup) session.createCriteria(AdminGroup.class).add(Restrictions.eq("name", bundle.getString("group.account-admins.name"))).uniqueResult();
+        
+        Setup.out.println("Creating full members");
         fullMembers = (MemberGroup) session.createCriteria(MemberGroup.class).add(Restrictions.eq("name", bundle.getString("group.full-members.name"))).uniqueResult();
+        
+        Setup.out.println("Creating inactive members");
         inactiveMembers = (MemberGroup) session.createCriteria(MemberGroup.class).add(Restrictions.eq("name", bundle.getString("group.inactive-members.name"))).uniqueResult();
+        
+        Setup.out.println("Creating full brokers");
         fullBrokers = (BrokerGroup) session.createCriteria(BrokerGroup.class).add(Restrictions.eq("name", bundle.getString("group.full-brokers.name"))).uniqueResult();
 
         enabledAdminGroups = Arrays.asList(systemAdmins, accountAdmins);
         enabledMemberGroups = Arrays.asList(fullMembers, fullBrokers);
 
+        Setup.out.println("Creating tables");
+                
         createCurrencies();
         createSystemAccountTypes();
         createMemberAccountTypes();
@@ -193,7 +204,8 @@ public class CreateInitialData implements Runnable {
     }
 
     private void createAccountFees() {
-
+        Setup.out.println("createAccountFees()");
+        
         final AccountFee contribution = new AccountFee();
         contribution.setName(bundle.getString("tax.contribution.name"));
         contribution.setDescription(bundle.getString("tax.contribution.description"));
@@ -230,6 +242,8 @@ public class CreateInitialData implements Runnable {
     }
 
     private void createCurrencies() {
+        Setup.out.println("createCurrencies()");
+        
         units = new Currency();
         units.setName("Units");
         units.setPattern("#amount# units");
@@ -238,6 +252,8 @@ public class CreateInitialData implements Runnable {
     }
 
     private void createCustomFields() {
+        Setup.out.println("createCustomFields()");
+        
         final Collection<MemberGroup> memberGroups = Arrays.asList(fullMembers, demoMembers, inactiveMembers, fullBrokers);
 
         // Birthday
@@ -391,6 +407,8 @@ public class CreateInitialData implements Runnable {
      * Create some example category
      */
     private void createExampleAdCategory() {
+        Setup.out.println("createExampleAdCategory()");
+        
         final AdCategory category = new AdCategory();
         category.setActive(true);
         category.setName(bundle.getString("ad-category.name"));
@@ -401,6 +419,8 @@ public class CreateInitialData implements Runnable {
      * Create some message categories
      */
     private void createExampleMessageCategory() {
+        Setup.out.println("createExampleMessageCategory()");
+        
         final List<MessageCategory> allCategories = new ArrayList<MessageCategory>();
 
         final MessageCategory support = new MessageCategory();
@@ -425,6 +445,8 @@ public class CreateInitialData implements Runnable {
     }
 
     private void createFees() {
+        Setup.out.println("createFees()");
+        
         final SimpleTransactionFee transactionTax = new SimpleTransactionFee();
         transactionTax.setName(bundle.getString("fee.transaction-tax.name"));
         transactionTax.setDescription(bundle.getString("fee.transaction-tax.description"));
@@ -451,6 +473,8 @@ public class CreateInitialData implements Runnable {
     }
 
     private void createMemberAccountSettings() {
+        Setup.out.println("createMemberAccountSettings()");
+        
         MemberGroupAccountSettings mgas = new MemberGroupAccountSettings();
         for (final MemberGroup group : enabledMemberGroups) {
             mgas = new MemberGroupAccountSettings();
@@ -467,6 +491,8 @@ public class CreateInitialData implements Runnable {
     }
 
     private void createMemberAccountTypes() {
+        Setup.out.println("createMemberAccountTypes()");
+        
         member = new MemberAccountType();
         member.setCurrency(units);
         member.setName(bundle.getString("account.member.name"));
@@ -476,6 +502,8 @@ public class CreateInitialData implements Runnable {
 
     @SuppressWarnings("unchecked")
     private void createPaymentFilter(final AccountType accountType, final String key, final Object... arguments) {
+        Setup.out.println("createPaymentFilter()");
+        
         final PaymentFilter filter = new PaymentFilter();
         filter.setAccountType(accountType);
         final String name = bundle.getString("payment-filter." + key);
@@ -505,6 +533,8 @@ public class CreateInitialData implements Runnable {
     }
 
     private void createPaymentFilters() {
+        Setup.out.println("createPaymentFilters()");
+        
         createPaymentFilter(member, "member-payments", trade, mobileTrade, externalTrade);
         createPaymentFilter(member, "member-loans", loan, loanRepayment);
         createPaymentFilter(member, "member-fees", liquidityTaxPayment, contributionPayment, transactionTaxPayment);
@@ -539,6 +569,8 @@ public class CreateInitialData implements Runnable {
 
     @SuppressWarnings("unchecked")
     private MemberRecordType createRemarks() {
+        Setup.out.println("creteRemarks()");
+        
         final Collection<Group> allGroups = session.createCriteria(Group.class).list();
 
         // Create member record type "remarks"
@@ -585,6 +617,8 @@ public class CreateInitialData implements Runnable {
     }
 
     private SystemAccount createSystemAccount(final SystemAccountType type) {
+        Setup.out.println("createSystemAccount()");
+        
         // Save the account
         final SystemAccount account = new SystemAccount();
         account.setCreditLimit(type.getCreditLimit());
@@ -601,6 +635,8 @@ public class CreateInitialData implements Runnable {
     }
 
     private void createSystemAccounts() {
+        Setup.out.println("createSystemAccounts()");
+        
         createSystemAccount(debit);
         createSystemAccount(community);
         createSystemAccount(voucher);
@@ -609,6 +645,8 @@ public class CreateInitialData implements Runnable {
 
     @SuppressWarnings("unchecked")
     private void createSystemAccountTypes() {
+        Setup.out.println("createSystemAccountTypes()");
+        
         debit = new SystemAccountType();
         debit.setCreditLimit(null);
         debit.setName(bundle.getString("account.debit.name"));
@@ -649,6 +687,7 @@ public class CreateInitialData implements Runnable {
     }
 
     private void createTransferTypes() {
+        Setup.out.println("createTransferTypes()");
 
         final Channel web = (Channel) session.createCriteria(Channel.class).add(Restrictions.eq("internalName", Channel.WEB)).uniqueResult();
 
@@ -682,6 +721,9 @@ public class CreateInitialData implements Runnable {
                 tt.getContext().setSelfPayment(true);
                 tt.setFrom(from);
                 tt.setTo(to);
+                
+                Setup.out.println("Saving TransferType '" + tt.getDescription() + "'");
+                
                 session.save(tt);
                 systemAdmins.getTransferTypes().add(tt);
                 systemToSystem.add(tt);
@@ -884,6 +926,8 @@ public class CreateInitialData implements Runnable {
     }
 
     private void setFeedbackParameters(final TransferType transferType) {
+        Setup.out.println("setFeedbackParameter()");
+        
         transferType.setRequiresFeedback(true);
         transferType.setDefaultFeedbackComments(bundle.getString("transfer-type.feedback.default-comments"));
         transferType.setDefaultFeedbackLevel(Level.NEUTRAL);
